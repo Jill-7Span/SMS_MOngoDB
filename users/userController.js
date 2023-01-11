@@ -4,6 +4,28 @@ const bcrypt = require('bcrypt');
 const common = require("../common/indexOfCommon");
 
 
+//  CSV Upload
+exports.csvUpload = async (req, res) => {
+    console.log("hello");
+    try {
+        console.log("path",path.join(__dirname, '../temp/',req.file.originalname));
+        csvtojson()
+        .fromFile(path.join(__dirname, '../temp/',req.file.originalname))
+        .then(async csvData => {
+            await csvData.forEach((obj) => {
+                    obj['user'] = '63bbb595682b2f69b0cf2989';
+                });
+                fs.unlink(`./temp/${req.file.originalname}`, (err) => {
+                    if (err) throw err;
+                })
+                console.log("deleted");
+                res.send(csvData);
+            })
+    } catch (error) {
+        console.log('error: ', error);
+    }
+};
+
 
 // get user
 exports.userDetails = async (req, res) => {
@@ -67,6 +89,7 @@ exports.userSignUp = async (req, res) => {
         return common.serverError;
     };
 };
+
 
 // log in
 exports.userLogIn = async (req, res) => {
@@ -188,6 +211,19 @@ exports.userDelete = async (req, res) => {
         return common.serverError;
     };
 };
+
+
+//  Find Contact
+exports.findContact = async (req, res) => {
+    try {
+        const id = req.body.id
+        const uploadedCsv = await usersService.findContact(id);
+        console.log('uploadedCsv: ', uploadedCsv);
+        return res.status(200).json(uploadedCsv);
+    } catch (error) {
+        return common.serverError;
+    }
+}
 
 // add admin
 exports.admin = async (req, res) => {

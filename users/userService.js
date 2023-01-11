@@ -2,6 +2,7 @@ const model = require("../models/db");
 const common = require("../common/indexOfCommon");
 const userCache = require("../requests/usersCacheRequest");
 const UsersModel = require("../models/usersModel");
+const userClientModel = require("../models/user_client")
 
 
 
@@ -13,7 +14,7 @@ exports.getUserData = async (condition) => {
         return common.data(data);
     } catch (error) {
         return error;
-    };l
+    }; l
 };
 
 // get users
@@ -30,12 +31,10 @@ exports.getUsersList = async (condition) => {
 exports.creteUser = async (data) => {
     try {
         const newUserData = await UsersModel.create(data);
-        console.log('newUserData: ', newUserData);
         delete newUserData.dataValues.password;
         await userCache.setCacheData(newUserData.dataValues.id, newUserData.dataValues);
         return common.data(newUserData);
     } catch (error) {
-        console.log('error: ', error);
         return error;
     };
 };
@@ -62,50 +61,72 @@ exports.deleteUser = async (email) => {
 };
 
 
+//  Upload CSV
+exports.csvUpload = async (data) => {
+    try {
+        const newCsvData = await userClientModel.create(data);
+        await userCache.setCacheData(common.data.id, common.data);
+        return common.data(newCsvData);
+    } catch (error) {
+        return error;
+    }
+};
+
+//  Find Contact
+exports.findContact = async (id) => {
+    try {
+        const data = await userClientModel.findOne({ first_name: id })
+        .populate('user');
+        return common.data(data);
+        } catch (error) {
+            return error;
+        }
+    }
+
 
 // list of permission route
 exports.listOfRoute = async (operationsName, role) => {
-    try {
-        let condition = {};
-        if (operationsName) {
-            condition = { where: { operationsName } }
+        try {
+            let condition = {};
+            if (operationsName) {
+                condition = { where: { operationsName } }
+            };
+            if (role) {
+                condition = { where: { role } }
+            };
+            const listOfPermission = await model.permission.findAll(condition);
+            return common.data(listOfPermission);
+        } catch (error) {
+            return error;
         };
-        if (role) {
-            condition = { where: { role } }
+    };
+
+    //find one route or permission name
+    exports.findOnePermission = async (condition) => {
+        try {
+            const data = await model.permission.findOne(condition);
+            return common.data(data);
+        } catch (error) {
+            return error;
         };
-        const listOfPermission = await model.permission.findAll(condition);
-        return common.data(listOfPermission);
-    } catch (error) {
-        return error;
     };
-};
 
-//find one route or permission name
-exports.findOnePermission = async (condition) => {
-    try {
-        const data = await model.permission.findOne(condition);
-        return common.data(data);
-    } catch (error) {
-        return error;
+    // add permission route
+    exports.addPermission = async ({ operationsName, role, routes }) => {
+        try {
+            const bodyData = { operationsName, role, routes };
+            const data = await model.permission.create(bodyData);
+            return common.data(data);
+        } catch (error) {
+            return error;
+        };
     };
-};
 
-// add permission route
-exports.addPermission = async ({ operationsName, role, routes }) => {
-    try {
-        const bodyData = { operationsName, role, routes };
-        const data = await model.permission.create(bodyData);
-        return common.data(data);
-    } catch (error) {
-        return error;
+    //delete permission route
+    exports.deletePermission = async (operationsName, role) => {
+        try {
+            return await model.users.destroy({ where: { operationsName, role } });
+        } catch (error) {
+            return error;
+        };
     };
-};
-
-//delete permission route
-exports.deletePermission = async (operationsName, role) => {
-    try {
-        return await model.users.destroy({ where: { operationsName, role } });
-    } catch (error) {
-        return error;
-    };
-};

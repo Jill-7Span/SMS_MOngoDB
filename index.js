@@ -1,7 +1,6 @@
-const express = require('express');
 const router = require('./routes');
 const env = require("./common/env");
-
+const express = require('express');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -13,5 +12,5 @@ app.use('/', (req, res) => {
 });
 
 app.listen(env.PORT, () => {
-    console.log('port started on port => 5000')
+    
 });

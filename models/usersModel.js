@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
 const usersModel = new mongoose.Schema({
-  role:{
+  _id: {
+    type: Schema.Types.ObjectId
+  },
+  role: {
     type: String,
-    required:true,
+    required: true,
   },
   firstName: {
     type: String,
@@ -33,6 +37,7 @@ const usersModel = new mongoose.Schema({
     type: String,
     require: true,
     trim: true,
+    select: false,
   },
   city: {
     type: String,
@@ -49,12 +54,14 @@ const usersModel = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  date: {
+    type: Date,
+    default: Date.now
+  },
+}, {
+  versionKey: false
 });
 
 const UsersModel = mongoose.model("users", usersModel);
 
-
 module.exports = UsersModel;
-
-// minlength: 4,
-// maxlength: 200
