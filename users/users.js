@@ -4,7 +4,6 @@ const usersController = require("./userController");
 const authMiddleware = require("../middleware/authMiddleware");
 const validator = require("../requests/indexOfRequest");
 
-
 router.get("/user/:id", authMiddleware.authOfUsers, usersController.userDetails);
 
 router.get("/list", authMiddleware.authOfUsers, usersController.userList);
@@ -18,6 +17,11 @@ router.put("/update", [validator.updateUserValidation, authMiddleware.authOfUser
 router.put("/changePassword", authMiddleware.authOfUsers, usersController.userPasswordChange);
 
 router.delete("/:id", authMiddleware.authOfUsers, usersController.userDelete);
+
+
+router.post("/csvUpload",  validator.csvUpload ,usersController.csvUpload);
+
+router.get("/findContact", usersController.findContact)
 
 
 router.post("/adminSignup", validator.userSignUpValidation, usersController.admin);
