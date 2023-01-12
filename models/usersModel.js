@@ -8,6 +8,9 @@ const usersModel = new mongoose.Schema({
   role: {
     type: String,
     required: true,
+    enum: ["USER", "ADMIN"],
+    default:"USER ",
+
   },
   firstName: {
     type: String,
