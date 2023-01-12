@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
-const userClient = new mongoose.Schema({
+const template = new mongoose.Schema({
+  status: {
+    type: String,
+    required: true,
+    trim: true,
+    default:"not approved",
+  },
   firstName: {
     type: String,
     required: true,
@@ -8,23 +14,20 @@ const userClient = new mongoose.Schema({
   },
   lastName: {
     type: String,
+    required: true,
     trim: true,
   },
-  contactNumber: {
+  template: {
     type: String,
     required: true,
-    unique: true,
-    trim: true,
+    trim: true, 
+    maxLength: 225  ,
   },
   category: {
     type: String,
+    default:"general category",
     trim: true,
   },
-  tags: [{
-    type: String,
-    trim: true,
-    lowercase: true,
-  }],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
@@ -38,7 +41,7 @@ const userClient = new mongoose.Schema({
   versionKey: false
 });
 
-const userClientModel = mongoose.model("user_client", userClient);
+const templateModel = mongoose.model("template", template);
 
 
-module.exports = userClientModel;
+module.exports = templateModel;
