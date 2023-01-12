@@ -16,7 +16,7 @@ exports.addTemplate = async (req, res) => {
         console.log('createdTemplate: ', createdTemplate);
         return status.success(res, createdTemplate);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     }
 };
 
@@ -28,7 +28,7 @@ exports.readTemplate = async (req, res) => {
         console.log('readTemplate: ', readTemplate);
         return status.success(res, readTemplate);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     }
 };
 
@@ -42,7 +42,7 @@ exports.updateTemplate = async (req, res) => {
         return status.success(res, updatedTemplate);
     } catch (error) {
         console.log('error: ', error);
-        return common.serverError;
+        return status.serverError;
     }
 };
 
@@ -54,6 +54,6 @@ exports.deleteTemplate = async (req, res) => {
         const deleteTemplate = await templateService.deleteTemplate(_id, user);
         return status.success(res, `deleted SMS Template was ${_id} ${deleteTemplate}`);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     }
 };
