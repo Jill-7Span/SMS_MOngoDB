@@ -29,7 +29,6 @@ exports.readTemplate = async (req, res) => {
         const readTemplate = await templateService.readTemplate(user);
         console.log('readTemplate: ', readTemplate);
         return status.success(res, readTemplate);
-
     } catch (error) {
         return status.serverError;
     }
