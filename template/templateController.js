@@ -16,7 +16,6 @@ exports.addTemplate = async (req, res) => {
         const createdTemplate = await templateService.addTemplate(templateData);
         console.log('createdTemplate: ', createdTemplate);
         return status.success(res, createdTemplate);
-
     } catch (error) {
         return status.serverError;
     }
