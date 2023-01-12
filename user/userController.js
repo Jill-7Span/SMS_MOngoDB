@@ -1,49 +1,24 @@
 const usersService = require("./userService");
 const userCache = require("../requests/usersCacheRequest");
 const bcrypt = require('bcrypt');
-const common = require("../common/indexOfCommon");
-
-
-//  CSV Upload
-exports.csvUpload = async (req, res) => {
-    console.log("hello");
-    try {
-        console.log("path",path.join(__dirname, '../temp/',req.file.originalname));
-        csvtojson()
-        .fromFile(path.join(__dirname, '../temp/',req.file.originalname))
-        .then(async csvData => {
-            await csvData.forEach((obj) => {
-                    obj['user'] = '63bbb595682b2f69b0cf2989';
-                });
-                fs.unlink(`./temp/${req.file.originalname}`, (err) => {
-                    if (err) throw err;
-                })
-                console.log("deleted");
-                res.send(csvData);
-            })
-    } catch (error) {
-        console.log('error: ', error);
-    }
-};
+const status = require("../common/indexOfCommon");
 
 
 // get user
 exports.userDetails = async (req, res) => {
     try {
         const userId = req.query.id;
-        const userCacheData = await userCache.getCacheData(userId);
-        if (userCacheData != null) {
-            return res.json(JSON.parse(userCacheData));
-        } else {
-            const existingUser = await usersService.getUsersList({
-                where: { id: userId },
-                attributes: { exclude: ['password'] },
-            });
-            await userCache.setCacheData(userId, existingUser);
-            return res.status(200).json(existingUser);
-        }
+        
+        // const userCacheData = await userCache.getCacheData(userId);
+        // if (userCacheData != null) {
+        //     return res.json(JSON.parse(userCacheData));
+        // } else {
+            const existingUser = await usersService.getUserData({_id: userId});
+            // await userCache.setCacheData(userId, existingUser);
+            return status.success(res, existingUser);
+        // }
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -54,29 +29,23 @@ exports.userList = async (req, res) => {
         let condition = {};
         if (emailSearch || numberSearch) {
             condition = {
-                where: {
-                    [Op.or]: [
-                        { email: { [Op.like]: '%' + emailSearch + '%' } },
-                        { contactNumber: { [Op.like]: '%' + numberSearch + '%' } },
-                    ]
-                },
-                attributes: { exclude: ['password'] }
-            };
+                $or: [
+                    { email: { $regex: emailSearch, $options: 'i' } },
+                    { contactNumber: { $regex: numberSearch, $options: 'i' } },
+                ]
+            }
         } else if (size && page) {
             condition = {
                 limit: parseInt(size),
                 offset: parseInt(size) * parseInt((page - 1)),
             };
         } else if (condition = {}) {
-            condition = { attributes: { exclude: ['password'] } };
+            condition = {};
         }
         const users = await usersService.getUsersList(condition);
-        for (var i = 0; i < users.length; i++) {
-            delete users.password;
-        }
         return res.status(200).json(users);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -84,9 +53,9 @@ exports.userList = async (req, res) => {
 exports.userSignUp = async (req, res) => {
     try {
         const values = ['USER'];  // by default set to USER from front end
-        await common.createNewUser(req, res, values);
+        await status.createNewUser(req, res, values);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -95,8 +64,8 @@ exports.userSignUp = async (req, res) => {
 exports.userLogIn = async (req, res) => {
     try {
         const { password, email } = req.body;
-        const users = await usersService.getUserData({ where: { email } });
-        if (!users) return res.status(404).json({ error: "invalid details check again" });
+        const users = await usersService.getUserData({ email });
+        if (!users) return status.invalidDetails;
         const userData = {
             firstName: users.firstName,
             lastName: users.lastName,
@@ -105,16 +74,16 @@ exports.userLogIn = async (req, res) => {
             const userPassword = users.password;
             const passwordCompare = await bcrypt.compare(password, userPassword);
             if (passwordCompare) {
-                const token = common.tokenJwt(users);
+                const token = status.tokenJwt(users);
                 return res.status(200).json({ ...userData, token });
             } else {
-                return res.status(404).json({ error: "invalid details" });
+                return status.invalidDetails;
             }
         } else {
-            return res.status(404).json({ error: "invalid details" });
+            return status.invalidDetails;
         }
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -164,10 +133,10 @@ exports.userUpdate = async (req, res) => {
         };
         update.updated_at = new Date();
         const updatedData = await usersService.updateUser(existingUserData.id, update);
-        const token = common.tokenJwt(updatedData);
+        const token = status.tokenJwt(updatedData);
         return res.status(200).json({ ...updatedData, token });
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -196,7 +165,7 @@ exports.userPasswordChange = async (req, res) => {
             return res.status(400).json({ Message: "Password didn't match" });
         };
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -208,7 +177,7 @@ exports.userDelete = async (req, res) => {
         await userCache.deleteCacheData(req.query.id, existingUser);
         res.status(200).json({ "Deleted account was": email });
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -221,7 +190,7 @@ exports.findContact = async (req, res) => {
         console.log('uploadedCsv: ', uploadedCsv);
         return res.status(200).json(uploadedCsv);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     }
 }
 
@@ -229,9 +198,9 @@ exports.findContact = async (req, res) => {
 exports.admin = async (req, res) => {
     try {
         const values = ['ADMIN'];
-        await common.createNewUser(req, res, values);
+        await status.createNewUser(req, res, values);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -244,7 +213,7 @@ exports.listOfRoute = async (req, res) => {
         const permissionList = await usersService.listOfRoute(operationsName, role);
         res.status(200).json(permissionList);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -261,14 +230,14 @@ exports.addRoute = async (req, res) => {
         });
         if (!existingPermission) {
             role = role.toUpperCase();
-            routes = common.permission[operationsName];
+            routes = status.permission[operationsName];
             const permissionAdded = await usersService.addPermission({ operationsName, role, routes });
             return res.status(200).json(permissionAdded);
         } else {
             return res.status(403).json({ message: 'Already Exist' });
         };
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };
 
@@ -279,6 +248,6 @@ exports.deleteRoute = async () => {
         await usersService.deletePermission(operationsName, role);
         return res.status(200).json({ "Deleted id was": req.query.id });
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     };
 };

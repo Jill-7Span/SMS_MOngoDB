@@ -1,4 +1,5 @@
 // null check function
+
 exports.data = (data) => {
     if (data == null) {
         return null;

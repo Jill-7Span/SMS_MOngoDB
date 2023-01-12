@@ -1,5 +1,5 @@
 const userClientService = require("./userClientService");
-const common = require("../common/indexOfCommon");
+const status = require("../common/indexOfCommon");
 const csvtojson = require("csvtojson")
 const path = require("path");
 const fs = require("fs");
@@ -21,10 +21,10 @@ exports.csvUpload = async (req, res) => {
                 })
                 console.log(`Temp File ${document} is deleted`);
                 const csv = await userClientService.csvUpload(csvData);
-                return res.status(200).json(csv);
+                return status.success(res, csv);
             })
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     }
 };
 
@@ -34,15 +34,15 @@ exports.vCardContact = async (req, res) => {
         const document = path.join(__dirname, `../temp/${req.file.originalname}`);
         console.log('document: ', document);
 
-        card.readFile(document, async  (err, json) => {
+        card.readFile(document, async (err, json) => {
 
             let vcfObject = []
-            for (let i = 0; i < json.length; i++) { 
+            for (let i = 0; i < json.length; i++) {
                 let array = {}
                 const element = json[i];
                 array.firstName = element.FN;
-                
-                if(element.TEL.value || element.TEL){
+
+                if (element.TEL.value || element.TEL) {
                     array.contactNumber = element.TEL.value || element.TEL;
                     array.user = '63bbb595682b2f69b0cf2989';  // pass user id here
                     array.category = req.query.category;
@@ -52,10 +52,10 @@ exports.vCardContact = async (req, res) => {
                 vcfObject.push(array)
             }
             const vcf = await userClientService.vcfUpload(vcfObject);
-            return res.status(200).json(vcf);
+            return status.success(res, vcf);
         });
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     }
 }
 
@@ -64,8 +64,8 @@ exports.findContact = async (req, res) => {
     try {
         const id = req.body.id
         const uploadedCsv = await userClientService.findContact(id);
-        return res.status(200).json(uploadedCsv);
+        return status.success(res, uploadedCsv);
     } catch (error) {
-        return common.serverError;
+        return status.serverError;
     }
 };
