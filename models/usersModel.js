@@ -10,6 +10,7 @@ const usersModel = new mongoose.Schema({
     required: true,
     enum: ["USER", "ADMIN"],
     default:"USER ",
+
   },
   firstName: {
     type: String,
