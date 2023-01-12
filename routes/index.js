@@ -3,7 +3,7 @@ const router = express.Router();
 const users = require("../user/user");
 const userClient = require("../userClient/userClient")
 const templates = require("../template/template")
- 
+
 // Routes
 router.use("/users", users);
 

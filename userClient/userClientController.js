@@ -33,7 +33,6 @@ exports.vCardContact = async (req, res) => {
     try {
         const document = path.join(__dirname, `../temp/${req.file.originalname}`);
         console.log('document: ', document);
-
         card.readFile(document, async (err, json) => {
 
             let vcfObject = []

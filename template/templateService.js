@@ -1,6 +1,8 @@
+
 const nullCheck = require("../common/indexOfCommon");
 const userCache = require("../requests/usersCacheRequest");
 const templateModel = require("../models/templateModule")
+
 
 //  db.coll.find({"tags" : { $in : ['etc1']  } } );
 
@@ -10,6 +12,7 @@ exports.addTemplate = async (templateData) => {
         const addedTemplate = await templateModel.create(templateData);
         await userCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(addedTemplate);
+
     } catch (error) {
         return error;
     }
@@ -21,6 +24,7 @@ exports.readTemplate = async (user) => {
         const readTemplate = await templateModel.find(user);
         await userCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(readTemplate);
+
     } catch (error) {
         return error;
     }
@@ -44,6 +48,7 @@ exports.deleteTemplate = async (_id, user) => {
     try {
         const data = await templateModel.deleteOne({ _id }, { user });
         return nullCheck.data(data);
+
     } catch (error) {
         return error;
     }

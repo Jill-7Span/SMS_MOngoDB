@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const status = require("../common/indexOfCommon");
 
 
+
 // get user
 exports.userDetails = async (req, res) => {
     try {
@@ -19,6 +20,7 @@ exports.userDetails = async (req, res) => {
         // }
     } catch (error) {
         return status.serverError;
+
     };
 };
 
@@ -34,18 +36,21 @@ exports.userList = async (req, res) => {
                     { contactNumber: { $regex: numberSearch, $options: 'i' } },
                 ]
             }
+
         } else if (size && page) {
             condition = {
                 limit: parseInt(size),
                 offset: parseInt(size) * parseInt((page - 1)),
             };
         } else if (condition = {}) {
+
             condition = {};
         }
         const users = await usersService.getUsersList(condition);
         return res.status(200).json(users);
     } catch (error) {
         return status.serverError;
+
     };
 };
 
@@ -53,9 +58,11 @@ exports.userList = async (req, res) => {
 exports.userSignUp = async (req, res) => {
     try {
         const values = ['USER'];  // by default set to USER from front end
+
         await status.createNewUser(req, res, values);
     } catch (error) {
         return status.serverError;
+
     };
 };
 
@@ -64,8 +71,10 @@ exports.userSignUp = async (req, res) => {
 exports.userLogIn = async (req, res) => {
     try {
         const { password, email } = req.body;
+
         const users = await usersService.getUserData({ email });
         if (!users) return status.invalidDetails;
+
         const userData = {
             firstName: users.firstName,
             lastName: users.lastName,
@@ -84,6 +93,7 @@ exports.userLogIn = async (req, res) => {
         }
     } catch (error) {
         return status.serverError;
+
     };
 };
 
@@ -137,6 +147,7 @@ exports.userUpdate = async (req, res) => {
         return res.status(200).json({ ...updatedData, token });
     } catch (error) {
         return status.serverError;
+
     };
 };
 
@@ -178,6 +189,7 @@ exports.userDelete = async (req, res) => {
         res.status(200).json({ "Deleted account was": email });
     } catch (error) {
         return status.serverError;
+
     };
 };
 
