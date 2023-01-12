@@ -13,7 +13,7 @@ exports.getUserData = async (condition) => {
         return common.data(data);
     } catch (error) {
         return error;
-    };l
+    }; l
 };
 
 // get users
@@ -30,12 +30,10 @@ exports.getUsersList = async (condition) => {
 exports.creteUser = async (data) => {
     try {
         const newUserData = await UsersModel.create(data);
-        console.log('newUserData: ', newUserData);
         delete newUserData.dataValues.password;
         await userCache.setCacheData(newUserData.dataValues.id, newUserData.dataValues);
         return common.data(newUserData);
     } catch (error) {
-        console.log('error: ', error);
         return error;
     };
 };
@@ -60,8 +58,6 @@ exports.deleteUser = async (email) => {
         return error;
     };
 };
-
-
 
 // list of permission route
 exports.listOfRoute = async (operationsName, role) => {

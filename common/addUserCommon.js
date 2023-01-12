@@ -1,4 +1,4 @@
-const usersService = require("../users/userService");
+const usersService = require("../user/userService");
 const common = require("../common/jwtCommon");
 const bcrypt = require('bcrypt');
 
