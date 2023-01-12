@@ -3,9 +3,9 @@ const router = express.Router();
 const templateController = require("./templateController");
 
 
-router.post("/addTemplate",  templateController.addTemplate);
+router.get("/readTemplate",  templateController.readTemplate);
 
-router.post("/readTemplate",  templateController.readTemplate);
+router.post("/addTemplate",  templateController.addTemplate);
 
 router.get("/updateTemplate", templateController.updateTemplate);
 

@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
 
-const template = new mongoose.Schema({
+const templates = new mongoose.Schema({
+
   status: {
     type: String,
     required: true,
     trim: true,
-    default:"not approved",
+    enum: ["approved", "not approved"],
+
   },
   firstName: {
     type: String,
@@ -40,8 +42,8 @@ const template = new mongoose.Schema({
 }, {
   versionKey: false
 });
+const templatesModel = mongoose.model("templates", templates);
 
-const templateModel = mongoose.model("template", template);
 
+module.exports = templatesModel;
 
-module.exports = templateModel;
