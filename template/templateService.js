@@ -12,7 +12,6 @@ exports.addTemplate = async (templateData) => {
         const addedTemplate = await templateModel.create(templateData);
         await userCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(addedTemplate);
-
     } catch (error) {
         return error;
     }
