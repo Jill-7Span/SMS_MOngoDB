@@ -13,6 +13,7 @@ exports.addTemplate = async (templateData) => {
         await userCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(addedTemplate);
     } catch (error) {
+        
         return error;
     }
 };
