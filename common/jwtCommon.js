@@ -5,7 +5,7 @@ const env = require("../common/env");
 // jwt token
 exports.tokenJwt = (users) => {
     const tokenData = {
-        id: users.id,
+        _id: users.id,
         role: users.role,
         firstName: users.firstName,
         lastName: users.lastName,

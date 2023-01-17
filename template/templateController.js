@@ -1,3 +1,5 @@
+const Filter = require('bad-words');
+const filter = new Filter();
 const templateService = require("./templateService");
 const status = require("../common/indexOfCommon");
 
@@ -6,15 +8,15 @@ const status = require("../common/indexOfCommon");
 exports.addTemplate = async (req, res) => {
     try {
         const { template, category } = req.body;
+        const massage = filter.clean(template);
         const templateData = {
             firstName: "jill",  // pass from token
             lastName: "patel",  // pass from token
             category: category,
-            template: template,
+            template: massage,
             user: "63bbb595682b2f69b0cf2989", // pass id from token
         };
         const createdTemplate = await templateService.addTemplate(templateData);
-        console.log('createdTemplate: ', createdTemplate);
         return status.success(res, createdTemplate);
     } catch (error) {
         return status.serverError;
@@ -25,8 +27,35 @@ exports.addTemplate = async (req, res) => {
 exports.readTemplate = async (req, res) => {
     try {
         const user = "63bbb595682b2f69b0cf2989";  // pass from token
-        const readTemplate = await templateService.readTemplate(user);
-        console.log('readTemplate: ', readTemplate);
+        const { templateId, search, globalSearch } = req.query;
+        let condition = {};
+        if (search) {
+            condition = {
+                $or: [
+                    { template: { $regex: search } },
+                    { category: { $regex: search } },
+                ]
+            }
+        } else if (templateId) {
+            condition = {
+                $and: [
+                    { _id: templateId },
+                    { user }
+                ]
+            }
+        } else if (globalSearch,user) {
+            condition = {
+                $and: [
+                    { templateStatus: "public" },
+                    // { _id: templateId },
+                    { user }
+                ]
+            }
+        } else if (condition) {
+            condition = {}
+        };
+        console.log('condition: ', condition);
+        const readTemplate = await templateService.readTemplate(condition);
         return status.success(res, readTemplate);
     } catch (error) {
         return status.serverError;

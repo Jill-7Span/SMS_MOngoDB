@@ -56,9 +56,9 @@ exports.userList = async (req, res) => {
 
 //  Sign Up
 exports.userSignUp = async (req, res) => {
+    console.log(req.body);
     try {
         const values = ['USER'];  // by default set to USER from front end
-
         await status.createNewUser(req, res, values);
     } catch (error) {
         return status.serverError;
@@ -74,7 +74,6 @@ exports.userLogIn = async (req, res) => {
 
         const users = await usersService.getUserData({ email });
         if (!users) return status.invalidDetails;
-
         const userData = {
             firstName: users.firstName,
             lastName: users.lastName,

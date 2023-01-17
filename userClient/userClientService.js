@@ -30,7 +30,7 @@ exports.vcfUpload = async (vcfData) => {
 //  Find Contact
 exports.findContact = async (id) => {
     try {
-        const data = await userClientModel.findOne({ _id: id }).populate('user');
+        const data = await userClientModel.findOne({ _id: id }).populate("user");
         return nullCheck.data(data);
     } catch (error) {
         return error;

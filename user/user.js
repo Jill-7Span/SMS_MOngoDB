@@ -6,12 +6,11 @@ const validator = require("../requests/indexOfRequest");
 
 router.get("/user", authMiddleware.authOfUsers, usersController.userDetails);
 
-
 router.get("/list", authMiddleware.authOfUsers, usersController.userList);
 
-router.post("/signup", validator.userSignUpValidation, usersController.userSignUp);
+router.post("/signUp", validator.userSignUpValidation, usersController.userSignUp);
 
-router.get("/login", validator.checkLoginParameter, usersController.userLogIn);
+router.get("/logIn", validator.checkLoginParameter, usersController.userLogIn);
 
 router.put("/update", [validator.updateUserValidation, authMiddleware.authOfUsers], usersController.userUpdate);
 
