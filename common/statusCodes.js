@@ -15,8 +15,9 @@ exports.invalidDetails = (res) => {
 };
 
 exports.success = (res, data) => {
+    var key = res.req.route.path;
     return res.status(200).json({
         statusCode: 200,
-        users: data,
+        [key]: data,        // Dynamic Key to JSON
     });
 };

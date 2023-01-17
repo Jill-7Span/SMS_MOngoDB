@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const templates = new mongoose.Schema({
 
-  status: {
+  templateStatus: {
     type: String,
-    required: true,
     trim: true,
-    enum: ["approved", "not approved"],
+    default: "public",
+    enum: ["public", "private", "paid"],
 
   },
   firstName: {
@@ -22,12 +22,12 @@ const templates = new mongoose.Schema({
   template: {
     type: String,
     required: true,
-    trim: true, 
-    maxLength: 225  ,
+    trim: true,
+    maxLength: 225,
   },
   category: {
     type: String,
-    default:"general category",
+    default: "general category",
     trim: true,
   },
   user: {

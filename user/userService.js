@@ -7,13 +7,12 @@ const UsersModel = require("../models/usersModel");
 
 //get user
 exports.getUserData = async (condition) => {
-    console.log('condition: ', condition);
     try {
-        const data = await UsersModel.findOne(condition);
+        const data = await UsersModel.findOne(condition).select('+password');
         return nullCheck.data(data);
     } catch (error) {
         return error;
-    }; l
+    };
 };
 
 // get users
@@ -30,8 +29,7 @@ exports.getUsersList = async (condition) => {
 exports.creteUser = async (data) => {
     try {
         const newUserData = await UsersModel.create(data);
-        delete newUserData.dataValues.password;
-        await userCache.setCacheData(newUserData.dataValues.id, newUserData.dataValues);
+        // await userCache.setCacheData(newUserData.dataValues._id, newUserData.dataValues);
         return nullCheck.data(newUserData);
     } catch (error) {
         return error;
