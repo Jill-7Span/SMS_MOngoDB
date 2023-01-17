@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
 
-const template = new mongoose.Schema({
-  status: {
+const templates = new mongoose.Schema({
+
+  templateStatus: {
     type: String,
-    required: true,
     trim: true,
-    default:"not approved",
+    default: "public",
+    enum: ["public", "private", "paid"],
+
   },
   firstName: {
     type: String,
@@ -20,12 +22,12 @@ const template = new mongoose.Schema({
   template: {
     type: String,
     required: true,
-    trim: true, 
-    maxLength: 225  ,
+    trim: true,
+    maxLength: 225,
   },
   category: {
     type: String,
-    default:"general category",
+    default: "general category",
     trim: true,
   },
   user: {
@@ -40,8 +42,8 @@ const template = new mongoose.Schema({
 }, {
   versionKey: false
 });
+const templatesModel = mongoose.model("templates", templates);
 
-const templateModel = mongoose.model("template", template);
 
+module.exports = templatesModel;
 
-module.exports = templateModel;

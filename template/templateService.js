@@ -1,46 +1,49 @@
-const common = require("../common/indexOfCommon");
-const userCache = require("../requests/usersCacheRequest");
-const userClientModel = require("../models/user_client")
 
-//  db.coll.find({"tags" : { $in : ['etc1']  } } );
+const nullCheck = require("../common/indexOfCommon");
+const userCache = require("../requests/usersCacheRequest");
+const templateModel = require("../models/templateModule");
+
 
 //  Add Template
-exports.addTemplate = async (csvData) => {
+exports.addTemplate = async (templateData) => {
     try {
-        const newCsvData = await userClientModel.create(csvData);
-        await userCache.setCacheData(common.data.id, common.data);
-        return common.data(newCsvData);
+        const addedTemplate = await templateModel.create(templateData);
+        await userCache.setCacheData(nullCheck.data.id, nullCheck.data);
+        return nullCheck.data(addedTemplate);
     } catch (error) {
         return error;
     }
 };
 
 //  Read Template
-exports.readTemplate = async (vcfData) => {
+exports.readTemplate = async (condition) => {
     try {
-        const newVcfData = await userClientModel.create(vcfData);
-        await userCache.setCacheData(common.data.id, common.data);
-        return common.data(newVcfData);
+        const readTemplate = await templateModel.find(condition).populate("user");
+        await userCache.setCacheData(nullCheck.data.id, nullCheck.data);
+        return nullCheck.data(readTemplate);
     } catch (error) {
         return error;
     }
 };
 
 //  Update Template
-exports.updateTemplate = async (id) => {
+exports.updateTemplate = async (_id, category, template, status) => {
     try {
-        const data = await userClientModel.findOne({ _id: id }).populate('user');
-        return common.data(data);
+        const data = await templateModel.findOneAndUpdate({ _id }, {
+            $set: { category, template, status }
+        },
+            { new: true });     // new : true for send updated data
+        return nullCheck.data(data);
     } catch (error) {
         return error;
     }
 };
 
 //  Delete Template
-exports.deleteTemplate = async (id) => {
+exports.deleteTemplate = async (_id, user) => {
     try {
-        const data = await userClientModel.findOne({ _id: id }).populate('user');
-        return common.data(data);
+        const data = await templateModel.deleteOne({ _id }, { user });
+        return nullCheck.data(data);
     } catch (error) {
         return error;
     }

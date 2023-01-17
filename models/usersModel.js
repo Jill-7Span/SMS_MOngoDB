@@ -2,12 +2,15 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const usersModel = new mongoose.Schema({
-  _id: {
-    type: Schema.Types.ObjectId
-  },
+  // _id: {
+  //   type: Schema.Types.ObjectId
+  // },
   role: {
     type: String,
-    required: true,
+    trim: true,
+    default:"USER",
+    enum: ["USER", "ADMIN"],
+
   },
   firstName: {
     type: String,
