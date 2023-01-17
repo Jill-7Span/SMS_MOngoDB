@@ -8,7 +8,7 @@ const UsersModel = require("../models/usersModel");
 //get user
 exports.getUserData = async (condition) => {
     try {
-        const data = await UsersModel.findOne(condition).select('+password');
+        const data = await UsersModel.findOne(condition).select('+password');       // .select is use to het password when in schema its select false
         return nullCheck.data(data);
     } catch (error) {
         return error;
