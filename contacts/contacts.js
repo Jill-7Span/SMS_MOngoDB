@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const contactsController = require("./contactsController");
-const validator = require("../requests/indexOfRequest");
+const validator = require("../validation/contactUpload");
 const middleware = require("../middleware/authMiddleware");
 
 

@@ -18,10 +18,9 @@ const templates = new mongoose.Schema({
     ref: 'business',
     required: false,
   },
-}, { 
-  timestamps: { createdAt: true, updatedAt: false } 
-},{
-    versionKey: false
+}, {
+  versionKey: false,
+  timestamps: { createdAt: true, updatedAt: true }
 });
 const templatesModel = mongoose.model("templates", templates);
 

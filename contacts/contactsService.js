@@ -1,5 +1,5 @@
 const nullCheck = require("../common/indexOfCommon");
-const businessCache = require("../requests/BusinessCacheRequest");
+const businessCache = require("../cache/usersCacheRequest");
 const businessModel = require("../models/contactsModel")
 
 
@@ -16,7 +16,6 @@ exports.findContact = async (id) => {
 //  Upload CSV
 exports.csvUpload = async (csvData) => {
     try {
-        console.log('csvData: ', csvData);
         const newCsvData = await businessModel.create(csvData);
         await businessCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(newCsvData);

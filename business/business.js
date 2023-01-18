@@ -10,7 +10,7 @@ router.get("/list", middleware.authOfBusiness, businessController.businessList);
 
 router.post("/signUp", validator.signUpBusiness, businessController.businessSignUp);
 
-router.get("/logIn", validator.checkLoginParameter, businessController.businessLogIn);
+router.get("/logIn", validator.loginBusiness, businessController.businessLogIn);
 
 router.put("/update", [validator.updateBusiness, middleware.authOfBusiness], businessController.businessUpdate);
 

@@ -1,6 +1,6 @@
 
 const nullCheck = require("../common/indexOfCommon");
-const businessCache = require("../requests/BusinessCacheRequest");
+const businessCache = require("../cache/usersCacheRequest");
 const templateModel = require("../models/templateModule");
 
 
@@ -27,10 +27,10 @@ exports.addTemplate = async (templateData) => {
 };
 
 //  Update Template
-exports.updateTemplate = async (_id, businessId, category, template) => {
+exports.updateTemplate = async (_id, businessId, category, template, updatedAt) => {
     try {
         const data = await templateModel.findOneAndUpdate({ $and: [{ _id }, { business: businessId }] }, {
-            $set: { category, template }
+            $set: { category, template, updatedAt }
         },
             { new: true });     // new : true for send updated data
         console.log('data: ', data);
