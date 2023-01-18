@@ -1,13 +1,6 @@
-const { createNewUser } = require("./addUserCommon");
 const { tokenJwt } = require("./jwtCommon");
-const { data } = require("./nullCheckCommon");
-const { permission } = require("./permissionOfRoute");
-const { serverError, invalidDetails, success, numberExist,
-    emailExist, updated, incorrectPassword, passwordNOtMatch, alreadyExits,
-    deleted, unauthorized } = require("./statusCodes");
+const { data } = require("./nullChecK");
+const { error, success } = require("./statusCodes");
 
 
-module.exports = {
-    tokenJwt, data, createNewUser, permission, serverError, invalidDetails, success, numberExist,
-    emailExist, updated, incorrectPassword, passwordNOtMatch, alreadyExits, deleted, unauthorized
-};
+module.exports = { tokenJwt, data, error, success };

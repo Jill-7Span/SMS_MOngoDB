@@ -3,13 +3,13 @@ const env = require("../common/env");
 
 
 // jwt token
-exports.tokenJwt = (users) => {
+exports.tokenJwt = (Business) => {
     const tokenData = {
-        _id: users._id,
-        role: users.role,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        email: users.email,
+        _id: Business._id,
+        role: Business.role,
+        firstName: Business.firstName,
+        lastName: Business.lastName,
+        email: Business.email,
     };
     const token = jwt.sign(tokenData, env.SECRET_KEY);
     return token;

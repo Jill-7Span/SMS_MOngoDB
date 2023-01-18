@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const users = require("../user/user");
-const userClient = require("../userClient/userClient")
+const business = require("../business/business");
+const contacts = require("../contacts/contacts")
 const templates = require("../template/template")
 
 // Routes
-router.use("/users", users);
+router.use("/business", business);
 
-router.use("/userClient", userClient);
+router.use("/contacts", contacts);
 
 router.use("/templates" , templates)
 
