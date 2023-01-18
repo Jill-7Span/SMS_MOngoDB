@@ -1,9 +1,10 @@
 //  Status Codes
 
-exports.error = (res, statusCode, error) => {
+exports.error = (res, statusCode, errors) => {
+    console.log('errors: ', errors);
     return res.status(statusCode).json({
         statusCode: statusCode,
-        Message: error,
+        Message: errors.message,
     });
 };
 

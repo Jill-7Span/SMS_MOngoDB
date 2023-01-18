@@ -18,12 +18,7 @@ const contactsModel = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
     unique: true,
-    trim: true,
-  },
-  category: {
-    type: String,
     trim: true,
   },
   tags: [{
@@ -40,10 +35,9 @@ const contactsModel = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-}, { 
-  timestamps: { createdAt: true, updatedAt: false } 
-},{
-    versionKey: false
+}, {
+  versionKey: false,
+  timestamps: { createdAt: true, updatedAt: true }
 });
 
 const ContactsModel = mongoose.model("contactsModel", contactsModel);

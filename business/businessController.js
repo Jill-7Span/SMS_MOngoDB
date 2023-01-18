@@ -138,7 +138,7 @@ exports.businessUpdate = async (req, res) => {
                 };
             }
         };
-        update.updated_at = new Date();
+        update.updatedAt = new Date();
         const updatedData = await businessService.updateBusiness(existingBusinessData._id, update);
         const token = status.tokenJwt(updatedData);
         return status.success(res, "200", { ...updatedData, token });

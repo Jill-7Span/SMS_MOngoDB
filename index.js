@@ -14,5 +14,5 @@ app.use('/', (req, res) => {
 
 
 app.listen(env.PORT, () => {
-
+    console.log(`###       PORT RUNNING ON ${env.PORT}          ###`)
 });

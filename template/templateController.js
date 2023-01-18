@@ -43,7 +43,7 @@ exports.addTemplate = async (req, res) => {
         const templateData = {
             category: category,
             template: massage,
-            business: req.business._id,
+            businessId: req.business._id,
         };
         const createdTemplate = await templateService.addTemplate(templateData);
         return status.success(res, "200", createdTemplate);
@@ -57,11 +57,12 @@ exports.updateTemplate = async (req, res) => {
     try {
         const businessId = req.business._id;
         const { _id, category, template } = req.query;
+        const updatedAt = new Date();
         if (businessId === _id) {
-            const updatedTemplate = await templateService.updateTemplate(_id, businessId, category, template);
+            const updatedTemplate = await templateService.updateTemplate(_id, businessId, category, template, updatedAt);
             return status.success(res, updatedTemplate);
         } else {
-            return status.error(res,"400","You are Unauthorized to this page");
+            return status.error(res, "400", "You are Unauthorized to this page");
         }
     } catch (error) {
         return status.error(res, "400", error);
@@ -74,7 +75,7 @@ exports.deleteTemplate = async (req, res) => {
         const _id = req.query._id;
         const business = req.business._id;
         await templateService.deleteTemplate(_id, business);
-        return status.success(res,"200","Deleted")
+        return status.success(res, "200", "Deleted")
     } catch (error) {
         return status.error(res, "400", error);
     }

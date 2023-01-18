@@ -32,6 +32,11 @@ const businessModel = new mongoose.Schema({
     trim: true,
     select: false,
   },
+  company: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   city: {
     type: String,
     required: true,
@@ -47,19 +52,9 @@ const businessModel = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  company: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  date: {
-    type: Date,
-    default: Date.now
-  },
-}, { 
-  timestamps: { createdAt: true, updatedAt: false } 
-},{
-    versionKey: false
+}, {
+  versionKey: false,
+  timestamps: { createdAt: true, updatedAt: true }
 });
 const BusinessModel = mongoose.model("business", businessModel);
 
