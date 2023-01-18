@@ -7,7 +7,6 @@ const templates = new mongoose.Schema({
     trim: true,
     default: "public",
     enum: ["public", "private", "paid"],
-
   },
   firstName: {
     type: String,

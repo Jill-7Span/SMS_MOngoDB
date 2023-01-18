@@ -9,18 +9,16 @@ const status = require("../common/indexOfCommon");
 exports.userDetails = async (req, res) => {
     try {
         const userId = req.query.id;
-        
-        // const userCacheData = await userCache.getCacheData(userId);
-        // if (userCacheData != null) {
-        //     return res.json(JSON.parse(userCacheData));
-        // } else {
-            const existingUser = await usersService.getUserData({_id: userId});
-            // await userCache.setCacheData(userId, existingUser);
+        const userCacheData = await userCache.getCacheData(userId);
+        if (userCacheData != null) {
+            return res.json(JSON.parse(userCacheData));
+        } else {
+            const existingUser = await usersService.getUserData({ _id: userId });
+            await userCache.setCacheData(userId, existingUser);
             return status.success(res, existingUser);
-        // }
+        }
     } catch (error) {
-        return status.serverError;
-
+        return status.serverError(res,error);
     };
 };
 
@@ -32,8 +30,8 @@ exports.userList = async (req, res) => {
         if (emailSearch || numberSearch) {
             condition = {
                 $or: [
-                    { email: { $regex: emailSearch, $options: 'i' } },
-                    { contactNumber: { $regex: numberSearch, $options: 'i' } },
+                    { email: { $regex: emailSearch } },
+                    { contactNumber: { $regex: numberSearch } },
                 ]
             }
 
@@ -47,21 +45,21 @@ exports.userList = async (req, res) => {
             condition = {};
         }
         const users = await usersService.getUsersList(condition);
-        return res.status(200).json(users);
+        return status.success(res, users);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
 
     };
 };
 
 //  Sign Up
 exports.userSignUp = async (req, res) => {
-    console.log(req.body);
     try {
         const values = ['USER'];  // by default set to USER from front end
+        req.body.role = "USER";
         await status.createNewUser(req, res, values);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
 
     };
 };
@@ -83,7 +81,7 @@ exports.userLogIn = async (req, res) => {
             const passwordCompare = await bcrypt.compare(password, userPassword);
             if (passwordCompare) {
                 const token = status.tokenJwt(users);
-                return res.status(200).json({ ...userData, token });
+                return status.success(res, { ...userData, token });
             } else {
                 return status.invalidDetails;
             }
@@ -91,7 +89,7 @@ exports.userLogIn = async (req, res) => {
             return status.invalidDetails;
         }
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
 
     };
 };
@@ -100,52 +98,39 @@ exports.userLogIn = async (req, res) => {
 exports.userUpdate = async (req, res) => {
     try {
         const body = req.body;
-        const tokenId = req.user.id;
-        const existingUserData = await usersService.getUserData({ where: { id: tokenId } });
+        const tokenId = req.user;
+        console.log('tokenId: ', tokenId);
+        const existingUserData = await usersService.getUserData({ _id: tokenId });
 
         let update = {};
-        if (body.firstName.length != 0) {
-            update.firstName = body.firstName;
-        }
-        if (body.lastName.length != 0) {
-            update.lastName = body.lastName;
-        }
-        if (existingUserData.email === body.email) {
-            update.email = body.email;
-        }
-        if (existingUserData.contactNumber === parseInt(body.contactNumber)) {
-            update.contactNumber = parseInt(body.contactNumber);
-        }
         const existingContactNumberOrEmail = await usersService.getUsersList({
-            where: {
-                [Op.or]: [
-                    { contactNumber: body.contactNumber },
-                    { email: req.body.email }
-                ]
-            }
+            $or: [
+                { contactNumber: body.contactNumber },
+                { email: req.body.email }
+            ]
         });
         if ((req.body.hasOwnProperty("contactNumber")) || (req.body.hasOwnProperty("email"))) {
-            if ((existingContactNumberOrEmail.length == 0) || (existingContactNumberOrEmail[0].id === tokenId)) {
+            if ((existingContactNumberOrEmail.length == 0) || (existingContactNumberOrEmail[0]._id === tokenId)) {
                 update.contactNumber = parseInt(body.contactNumber);
                 update.email = body.email;
             } else {
                 for (let i = 0; i < existingContactNumberOrEmail.length; i++) {
                     const element = existingContactNumberOrEmail[i];
-                    if ((element.id != tokenId) && (element.contactNumber === parseInt(body.contactNumber))) {
-                        return res.status(400).json({ message: "Contact Number Already Exits" });
+                    if ((element._id != tokenId) && (element.contactNumber === parseInt(body.contactNumber))) {
+                        return status.numberExist;
                     }
-                    if ((element.id != tokenId) && (element.email === body.email)) {
-                        return res.status(400).json({ message: "Contact Email Already Exits" });
+                    if ((element._id != tokenId) && (element.email === body.email)) {
+                        return status.emailExist;
                     }
                 };
             }
         };
         update.updated_at = new Date();
-        const updatedData = await usersService.updateUser(existingUserData.id, update);
+        const updatedData = await usersService.updateUser(existingUserData._id, update);
         const token = status.tokenJwt(updatedData);
-        return res.status(200).json({ ...updatedData, token });
+        return status.success(res, { ...updatedData, token });
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
 
     };
 };
@@ -165,45 +150,33 @@ exports.userPasswordChange = async (req, res) => {
                     const salt = await bcrypt.genSalt(10);
                     update.password = await bcrypt.hash(newPassword, salt);
                     update.updated_at = new Date();
-                    await usersService.updateUser(user.id, update);
-                    return res.status(200).json({ Message: "Your password is updated successfully" });
+                    await usersService.updateUser(user._id, update);
+                    return status.updated;
                 } else {
-                    return res.status(400).json({ Message: "Your password is incorrect" });
+                    return status.incorrectPassword;
                 }
             });
         } else {
-            return res.status(400).json({ Message: "Password didn't match" });
+            return status.passwordNOtMatch;
         };
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     };
 };
 
 // delete users
 exports.userDelete = async (req, res) => {
     try {
-        const email = req.query.email;
-        await usersService.deleteUser(email);
-        await userCache.deleteCacheData(req.query.id, existingUser);
-        res.status(200).json({ "Deleted account was": email });
+        const _id = req.user._id;
+        await usersService.deleteUser(_id);
+        // await userCache.deleteCacheData(req.query._id, existingUser);
+        return status.deleted(res);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
 
     };
 };
 
-
-//  Find Contact
-exports.findContact = async (req, res) => {
-    try {
-        const id = req.body.id
-        const uploadedCsv = await usersService.findContact(id);
-        console.log('uploadedCsv: ', uploadedCsv);
-        return res.status(200).json(uploadedCsv);
-    } catch (error) {
-        return status.serverError;
-    }
-}
 
 // add admin
 exports.admin = async (req, res) => {
@@ -211,7 +184,7 @@ exports.admin = async (req, res) => {
         const values = ['ADMIN'];
         await status.createNewUser(req, res, values);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     };
 };
 
@@ -222,9 +195,9 @@ exports.listOfRoute = async (req, res) => {
     try {
         const { operationsName, role } = req.query
         const permissionList = await usersService.listOfRoute(operationsName, role);
-        res.status(200).json(permissionList);
+        return status.success(res, permissionList);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     };
 };
 
@@ -243,12 +216,12 @@ exports.addRoute = async (req, res) => {
             role = role.toUpperCase();
             routes = status.permission[operationsName];
             const permissionAdded = await usersService.addPermission({ operationsName, role, routes });
-            return res.status(200).json(permissionAdded);
+            return status.success(res, permissionAdded);
         } else {
-            return res.status(403).json({ message: 'Already Exist' });
+            return status.alreadyExits;
         };
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     };
 };
 
@@ -257,8 +230,8 @@ exports.deleteRoute = async () => {
     try {
         const { operationsName, role } = req.query;
         await usersService.deletePermission(operationsName, role);
-        return res.status(200).json({ "Deleted id was": req.query.id });
+        return status.success(res, { "Deleted id was": req.query.id });
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     };
 };

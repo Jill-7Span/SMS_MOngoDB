@@ -6,7 +6,7 @@ const redisClient = Redis.createClient();
 exports.getCacheData = async (id) => {
     try {
         await redisClient.connect();
-        const cacheData = await redisClient.GET(`cacheData.${id}`);
+        const cacheData = await redisClient.GET(`cacheData.${_id}`);
         console.log("Cache Hit");
         return cacheData;
     } catch (error) {
@@ -19,8 +19,8 @@ exports.getCacheData = async (id) => {
 exports.setCacheData = async (id, newCacheData) => {
     try {
         await redisClient.connect();
-        const cacheData = await redisClient.SET(`cacheData.${id}`, JSON.stringify(newCacheData));
-        await redisClient.expire(`cacheData.${id}`, CACHE_EXPIRE_TIME);
+        const cacheData = await redisClient.SET(`cacheData.${_id}`, JSON.stringify(newCacheData));
+        await redisClient.expire(`cacheData.${_id}`, CACHE_EXPIRE_TIME);
         console.log("Cache Miss And Set");
         return cacheData;
     } catch (error) {
@@ -33,7 +33,7 @@ exports.setCacheData = async (id, newCacheData) => {
 exports.deleteCacheData = async (id) => {
     try {
         await redisClient.connect();
-        await redisClient.DEL(`cacheData.${id}`);
+        await redisClient.DEL(`cacheData.${_id}`);
         console.log("Delete Cache");
     } catch (error) {
         return error;

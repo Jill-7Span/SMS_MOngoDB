@@ -16,7 +16,7 @@ router.put("/update", [validator.updateUserValidation, authMiddleware.authOfUser
 
 router.put("/changePassword", authMiddleware.authOfUsers, usersController.userPasswordChange);
 
-router.delete("/:id", authMiddleware.authOfUsers, usersController.userDelete);
+router.delete("/deleteUser", authMiddleware.authOfUsers, usersController.userDelete);
 
 
 

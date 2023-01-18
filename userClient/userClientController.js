@@ -24,7 +24,7 @@ exports.csvUpload = async (req, res) => {
                 return status.success(res, csv);
             })
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     }
 };
 
@@ -54,7 +54,7 @@ exports.vCardContact = async (req, res) => {
             return status.success(res, vcf);
         });
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     }
 }
 
@@ -65,6 +65,6 @@ exports.findContact = async (req, res) => {
         const uploadedCsv = await userClientService.findContact(id);
         return status.success(res, uploadedCsv);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res,error);
     }
 };

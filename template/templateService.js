@@ -18,7 +18,7 @@ exports.addTemplate = async (templateData) => {
 //  Read Template
 exports.readTemplate = async (condition) => {
     try {
-        const readTemplate = await templateModel.find(condition).populate("user");
+        const readTemplate = await templateModel.find(condition).populate("user", "-_id firstName lastName");
         await userCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(readTemplate);
     } catch (error) {
@@ -27,12 +27,14 @@ exports.readTemplate = async (condition) => {
 };
 
 //  Update Template
-exports.updateTemplate = async (_id, category, template, status) => {
+exports.updateTemplate = async (_id, userId, category, template) => {
+    console.log('_id, userId, category, template: ', _id, userId, category, template);
     try {
-        const data = await templateModel.findOneAndUpdate({ _id }, {
-            $set: { category, template, status }
+        const data = await templateModel.findOneAndUpdate({$and:[{_id},{user:userId}]}, {
+            $set: { category, template }
         },
             { new: true });     // new : true for send updated data
+        console.log('data: ', data);
         return nullCheck.data(data);
     } catch (error) {
         return error;
@@ -40,9 +42,10 @@ exports.updateTemplate = async (_id, category, template, status) => {
 };
 
 //  Delete Template
-exports.deleteTemplate = async (_id, user) => {
+exports.deleteTemplate = async (_id) => {
+    console.log('_id: ', _id);
     try {
-        const data = await templateModel.deleteOne({ _id }, { user });
+        const data = await templateModel.deleteOne({ _id });
         return nullCheck.data(data);
     } catch (error) {
         return error;
