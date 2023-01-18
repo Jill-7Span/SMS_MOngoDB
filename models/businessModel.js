@@ -1,13 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const usersModel = new mongoose.Schema({
-  role: {
-    type: String,
-    trim: true,
-    enum: ["USER", "ADMIN"],
-
-  },
+const businessModel = new mongoose.Schema({
   firstName: {
     type: String,
     min: [3, 'first name must be greater than 3 letters'],
@@ -36,7 +30,7 @@ const usersModel = new mongoose.Schema({
     type: String,
     require: true,
     trim: true,
-    select:false,
+    select: false,
   },
   city: {
     type: String,
@@ -44,6 +38,11 @@ const usersModel = new mongoose.Schema({
     trim: true,
   },
   state: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  country: {
     type: String,
     required: true,
     trim: true,
@@ -57,10 +56,11 @@ const usersModel = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-}, {
-  versionKey: false
+}, { 
+  timestamps: { createdAt: true, updatedAt: false } 
+},{
+    versionKey: false
 });
+const BusinessModel = mongoose.model("business", businessModel);
 
-const UsersModel = mongoose.model("users", usersModel);
-
-module.exports = UsersModel;
+module.exports = BusinessModel;
