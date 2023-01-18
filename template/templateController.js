@@ -10,23 +10,23 @@ exports.addTemplate = async (req, res) => {
         const { template, category } = req.body;
         const massage = filter.clean(template);
         const templateData = {
-            firstName: "jill",  // pass from token
-            lastName: "patel",  // pass from token
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
             category: category,
             template: massage,
-            user: "63bbb595682b2f69b0cf2989", // pass id from token
+            user: req.user._id,
         };
         const createdTemplate = await templateService.addTemplate(templateData);
         return status.success(res, createdTemplate);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res, error);
     }
 };
 
 //  Read Template
 exports.readTemplate = async (req, res) => {
     try {
-        const user = "63bbb595682b2f69b0cf2989";  // pass from token
+        const user = req.user._id;  // pass from token
         const { templateId, search, globalSearch } = req.query;
         let condition = {};
         if (search) {
@@ -43,7 +43,7 @@ exports.readTemplate = async (req, res) => {
                     { user }
                 ]
             }
-        } else if (globalSearch,user) {
+        } else if (globalSearch, user) {
             condition = {
                 $and: [
                     { templateStatus: "public" },
@@ -54,37 +54,37 @@ exports.readTemplate = async (req, res) => {
         } else if (condition) {
             condition = {}
         };
-        console.log('condition: ', condition);
         const readTemplate = await templateService.readTemplate(condition);
         return status.success(res, readTemplate);
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res, error);
     }
 };
 
 //  Update Template
 exports.updateTemplate = async (req, res) => {
     try {
+        const userId = req.user._id;
         const { _id, category, template } = req.query;
-        const status = "not approved"
-        const updatedTemplate = await templateService.updateTemplate(_id, category, template, status);
-        console.log('updatedTemplate: ', updatedTemplate);
-        return status.success(res, updatedTemplate);
+        if(userId === _id){
+            const updatedTemplate = await templateService.updateTemplate(_id, userId, category, template);
+            return status.success(res, updatedTemplate);
+        }else{
+            return status.unauthorized(res);
+        }
     } catch (error) {
-        console.log('error: ', error);
-        return status.serverError;
+        return status.serverError(res, error);
     }
 };
 
 //  Delete Template
 exports.deleteTemplate = async (req, res) => {
     try {
-        const _id = req.params.id;
-        const user = "63bbb595682b2f69b0cf2989";  // pass from token
-        const deleteTemplate = await templateService.deleteTemplate(_id, user);
-        return status.success(res, `deleted SMS Template was ${_id} ${deleteTemplate}`);
-
+        const _id = req.query._id;
+        const user = req.user._id;
+        await templateService.deleteTemplate(_id, user);
+        return status.deleted(res)
     } catch (error) {
-        return status.serverError;
+        return status.serverError(res, error);
     }
 };
