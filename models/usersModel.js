@@ -2,13 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const usersModel = new mongoose.Schema({
-  // _id: {
-  //   type: Schema.Types.ObjectId
-  // },
   role: {
     type: String,
     trim: true,
-    default:"USER",
     enum: ["USER", "ADMIN"],
 
   },
@@ -40,7 +36,7 @@ const usersModel = new mongoose.Schema({
     type: String,
     require: true,
     trim: true,
-    select: false,
+    select:false,
   },
   city: {
     type: String,

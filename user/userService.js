@@ -4,11 +4,11 @@ const userCache = require("../requests/usersCacheRequest");
 const UsersModel = require("../models/usersModel");
 
 
-
 //get user
 exports.getUserData = async (condition) => {
     try {
-        const data = await UsersModel.findOne(condition).select('+password');       // .select is use to het password when in schema its select false
+        const data = await UsersModel.findOne(condition).select("+password");       
+        // .select is use to het password when in schema its select false`
         return nullCheck.data(data);
     } catch (error) {
         return error;
@@ -18,8 +18,8 @@ exports.getUserData = async (condition) => {
 // get users
 exports.getUsersList = async (condition) => {
     try {
-        const data = await UsersModel.findAll(condition);
-        return nullCheck.data(data);
+        const data = await UsersModel.find(condition);
+        return data;
     } catch (error) {
         return error;
     };
@@ -37,11 +37,10 @@ exports.creteUser = async (data) => {
 };
 
 // update users
-exports.updateUser = async (id, update) => {
+exports.updateUser = async (_id, update) => {
     try {
-        await UsersModel.updateOne(update, { where: { id } });
-        const data = await UsersModel.findOne({ where: { id }, attributes: { exclude: ['password'] }, });
-        await userCache.setCacheData(data.dataValues.id, data.dataValues);
+        const data = await UsersModel.findOneAndUpdate({ _id }, { $set: update }, { returnDocument: 'after' });
+        // await userCache.setCacheData(data.dataValues._id, data.dataValues);
         return nullCheck.data(data);
     } catch (error) {
         return error;
@@ -49,9 +48,9 @@ exports.updateUser = async (id, update) => {
 };
 
 // delete users
-exports.deleteUser = async (email) => {
+exports.deleteUser = async (_id) => {
     try {
-        return await UsersModel.remove({ where: { email } });
+        return await UsersModel.deleteOne({ _id });
     } catch (error) {
         return error;
     };
