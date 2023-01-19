@@ -1,4 +1,3 @@
-
 const nullCheck = require("../common/indexOfCommon");
 const businessCache = require("../cache/usersCacheRequest");
 const templateModel = require("../models/templateModule");
@@ -12,7 +11,7 @@ exports.readTemplate = async (condition) => {
         return nullCheck.data(readTemplate);
     } catch (error) {
         return error;
-    }
+    };
 };
 
 //  Add Template
@@ -23,21 +22,21 @@ exports.addTemplate = async (templateData) => {
         return nullCheck.data(addedTemplate);
     } catch (error) {
         return error;
-    }
+    };
 };
 
 //  Update Template
 exports.updateTemplate = async (_id, businessId, category, template, updatedAt) => {
     try {
-        const data = await templateModel.findOneAndUpdate({ $and: [{ _id }, { business: businessId }] }, {
+        const data = await templateModel.findOneAndUpdate({
+            $and: [{ _id }, { businessId }]
+        }, {
             $set: { category, template, updatedAt }
-        },
-            { new: true });     // new : true for send updated data
-        console.log('data: ', data);
+        }, { new: true });     // new : true for send updated data
         return nullCheck.data(data);
     } catch (error) {
         return error;
-    }
+    };
 };
 
 //  Delete Template
@@ -47,5 +46,5 @@ exports.deleteTemplate = async (_id) => {
         return nullCheck.data(data);
     } catch (error) {
         return error;
-    }
+    };
 };

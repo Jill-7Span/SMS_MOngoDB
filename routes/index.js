@@ -9,7 +9,7 @@ router.use("/business", business);
 
 router.use("/contacts", contacts);
 
-router.use("/templates" , templates)
+router.use("/templates" , templates);
 
 
 module.exports = router;
