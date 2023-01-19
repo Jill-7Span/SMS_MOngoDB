@@ -69,8 +69,11 @@ exports.updateTemplate = async (req, res) => {
 exports.deleteTemplate = async (req, res) => {
     try {
         const _id = req.query._id;
-        const business = req.business._id;
-        await templateService.deleteTemplate(_id, business);
+        const businessId = req.business._id;
+        let condition = {
+            $and: [{ businessId }, { _id }]
+        }
+        await templateService.deleteTemplate(condition);
         return status.success(res, "200", "Deleted Successfully")
     } catch (error) {
         return status.error(res, "500", error);

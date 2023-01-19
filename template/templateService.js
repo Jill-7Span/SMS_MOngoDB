@@ -40,9 +40,9 @@ exports.updateTemplate = async (_id, businessId, category, template, updatedAt) 
 };
 
 //  Delete Template
-exports.deleteTemplate = async (_id) => {
+exports.deleteTemplate = async (condition) => {
     try {
-        const data = await templateModel.deleteOne({ _id });
+        const data = await templateModel.deleteOne(condition);
         return nullCheck.data(data);
     } catch (error) {
         return error;

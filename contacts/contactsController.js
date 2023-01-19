@@ -94,7 +94,9 @@ exports.updateTags = async (req, res) => {
 // Delete Contact
 exports.deleteContact = async (req, res) => {
     try {
-
+        const _id = req.query._id;
+        await contactsService.deleteContact(_id);
+        return status.success(res, "200", "Deleted Successfully")
     } catch (error) {
         return status.error(res, "500", error);
     };

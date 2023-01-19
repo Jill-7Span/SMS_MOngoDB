@@ -15,6 +15,9 @@ router.put("/updateContact", middleware.authOfBusiness, contactsController.updat
 
 router.put("/updateTags", middleware.authOfBusiness, contactsController.updateTags);
 
+router.delete("/deleteContact", middleware.authOfBusiness, contactsController.deleteContact);
+
+
 
 
 module.exports = router;

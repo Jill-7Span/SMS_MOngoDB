@@ -63,11 +63,12 @@ exports.updateTAgs = async (_id, tags) => {
 };
 
 //  Delete Contact
-exports.deleteContact = async (csvData) => {
+exports.deleteContact = async (condition) => {
+    console.log('condition: ', condition);
     try {
-        const newCsvData = await contactsModel.create(csvData);
-        await contactsCache.setCacheData(nullCheck.data.id, nullCheck.data);
-        return nullCheck.data(newCsvData);
+        const data = await contactsModel.deleteOne(condition);
+        console.log('data: ', data);
+        return nullCheck.data(data);
     } catch (error) {
         return error;
     };
