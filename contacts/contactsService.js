@@ -16,6 +16,7 @@ exports.findContact = async (_id) => {
 //  List of Contact
 exports.allContacts = async (condition) => {
     try {
+        // .populate("businessId","-_id firstName lastName");  to populate business data
         const data = await contactsModel.find(condition).populate("tagId","-_id tag");
         return nullCheck.data(data);
     } catch (error) {
