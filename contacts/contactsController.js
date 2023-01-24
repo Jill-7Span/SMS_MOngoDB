@@ -1,8 +1,7 @@
 const contactsService = require("./contactsService");
 const status = require("../common/indexOfCommon");
-const csvtojson = require("csvtojson")
-const path = require("path");
-const fs = require("fs");
+const allContact = require("../common/findContacts");
+const helper = require("../helper/indexOfHelper");
 
 //  Find Contact
 exports.findContact = async (req, res) => {
@@ -20,20 +19,10 @@ exports.allContacts = async (req, res) => {
     try {
         const businessId = req.business._id;
         const { searchTags } = req.query;
-        let condition = {};
-        if (searchTags) {
-            condition = {
-                $and: [
-                    { businessId },
-                    { tags: { $regex: searchTags } },
-                ]
-            };
-        } else if (condition) {
-            condition = { businessId };
-        }
-
-        const allCOntacts = await contactsService.allCOntacts(condition);
-        return status.success(res, "200", allCOntacts)
+        const condition = await allContact.listOfNumber(searchTags, businessId);
+        const allContacts = await contactsService.allContacts(condition);
+        // console.log("all contacts", allContacts.map(({ contactNumber }) => contactNumber));
+        return status.success(res, "200", allContacts)
     } catch (error) {
         return status.error(res, "500", error);
     };
@@ -42,29 +31,15 @@ exports.allContacts = async (req, res) => {
 //  CSV Upload
 exports.csvUpload = async (req, res) => {
     try {
-        const businessId = req.business._id;
-        const tags = req.query.tags;
-        const document = path.join(__dirname, `../temp/${req.file.originalname}`);
-        csvtojson()
-            .fromFile(document)
-            .then(async csvData => {
-                csvData.forEach((obj) => {
-                    obj['businessId'] = businessId;
-                    obj['tags'] = tags;
-                });
-                fs.unlink(document, (error) => {
-                    if (error) {
-                        return status.error(res, "400", error);
-                    };
-                });
-                console.log(`Temp File ${document} is deleted`);
-                const csv = await contactsService.csvUpload(csvData);
-                return status.success(res, "201", csv);
-            });
-    } catch (error) {
+        const csvData = await helper.csvToJson(req, res);
+        const csv = await contactsService.csvUpload(csvData);
+        return status.success(res, "201", csv);
+    }
+    catch (error) {
         return status.error(res, "500", error);
     };
-};
+}
+
 
 // Update Contact
 exports.updateContact = async (req, res) => {
@@ -73,19 +48,21 @@ exports.updateContact = async (req, res) => {
         const bodyData = req.body;
         const updatedAt = new Date();
         const updatedContact = await contactsService.updateContact(businessId, bodyData, updatedAt);
-        // return status.success(res, updatedTemplate);
+        return status.success(res, updatedContact);
 
     } catch (error) {
         return status.error(res, "500", error);
     };
 };
 
-//  Tags Update
-exports.updateTags = async (req, res) => {
+// Update Contact Tags
+exports.updateContactTags = async (req, res) => {
     try {
-        const { _id, tags } = req.body;
-        const updatedTag = await contactsService.updateTAgs(_id, tags);
-        return status.success(res, "200", updatedTag)
+        const businessId = req.business._id;
+        const { _id, tagName } = req.body;
+        const tag = await contactsService.findTags(tagName, businessId);
+        const updatedTag = await contactsService.updateContactTags(_id, tag._id);
+        return status.success(res, "200", updatedTag);
     } catch (error) {
         return status.error(res, "500", error);
     };
@@ -95,8 +72,8 @@ exports.updateTags = async (req, res) => {
 exports.deleteContact = async (req, res) => {
     try {
         const _id = req.query._id;
-        await contactsService.deleteContact(_id);
-        return status.success(res, "200", "Deleted Successfully")
+        const deletedContact = await contactsService.deleteContact(_id);
+        return status.success(res, "200", `Deleted Successfully ${deletedContact.firstName + " " + deletedContact.contactNumber}`)
     } catch (error) {
         return status.error(res, "500", error);
     };

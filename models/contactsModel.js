@@ -21,10 +21,10 @@ const contactsModel = new mongoose.Schema({
     unique: true,
     trim: true,
   },
-  tags: [{
-    type: String,
-    trim: true,
-    lowercase: true,
+  tagId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'tags',
+    required: false,
   }],
   businessId: {
     type: mongoose.Schema.Types.ObjectId,

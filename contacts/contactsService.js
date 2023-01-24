@@ -1,12 +1,12 @@
 const nullCheck = require("../common/indexOfCommon");
 const contactsCache = require("../cache/usersCacheRequest");
-const contactsModel = require("../models/contactsModel")
+const contactsModel = require("../models/contactsModel");
 
 
 //  Find Contact
 exports.findContact = async (_id) => {
     try {
-        const data = await contactsModel.findOne({ _id }).populate("businessId");
+        const data = await contactsModel.findOne({ _id });
         return nullCheck.data(data);
     } catch (error) {
         return error;
@@ -14,12 +14,12 @@ exports.findContact = async (_id) => {
 };
 
 //  List of Contact
-exports.allCOntacts = async (condition) => {
+exports.allContacts = async (condition) => {
     try {
-        const data = await contactsModel.find(condition);
+        const data = await contactsModel.find(condition).populate("tagId","-_id tag");
         return nullCheck.data(data);
     } catch (error) {
-
+        return error;
     };
 };
 
@@ -34,26 +34,12 @@ exports.csvUpload = async (csvData) => {
     };
 };
 
-//  Update Contact
-exports.updateContact = async (businessId, bodyData, updatedAt) => {
-    try {
-        const updatedContact = await contactsModel.findOneAndUpdate({ $and: [{ _id: bodyData._id }, { business: businessId }] }, {
-            $set: { bodyData, updatedAt }
-        },
-        { new: true });
-        // await contactsCache.setCacheData(nullCheck.data.id, nullCheck.data);
-        return nullCheck.data(updatedContact);
-    } catch (error) {
-        return error;
-    };
-};
-
-//  Update Tags
-exports.updateTAgs = async (_id, tags) => {
+//  Update Contact Tags
+exports.updateContactTags = async (_id, tagsId) => {
     try {
         const updatedContact = await contactsModel.updateMany(
             { _id: { $in: _id } },
-            { $set: { tags } }
+            { $set: { tagsId } }
         );
         // await contactsCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(updatedContact);
@@ -62,14 +48,27 @@ exports.updateTAgs = async (_id, tags) => {
     };
 };
 
-//  Delete Contact
-exports.deleteContact = async (condition) => {
-    console.log('condition: ', condition);
+//  Update Contact
+exports.updateContact = async (businessId, bodyData, updatedAt) => {
     try {
-        const data = await contactsModel.deleteOne(condition);
-        console.log('data: ', data);
+        const updatedContact = await contactsModel.findOneAndUpdate({ $and: [{ _id: bodyData._id }, { business: businessId }] }, {
+            $set: { bodyData, updatedAt }
+        },
+            { new: true });
+        // await contactsCache.setCacheData(nullCheck.data.id, nullCheck.data);
+        return nullCheck.data(updatedContact);
+    } catch (error) {
+        return error;
+    };
+};
+
+//  Delete Contact
+exports.deleteContact = async (_id) => {
+    try {
+        const data = await contactsModel.findByIdAndDelete(_id);
         return nullCheck.data(data);
     } catch (error) {
         return error;
     };
 };
+

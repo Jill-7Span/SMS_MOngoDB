@@ -6,7 +6,7 @@ const templateModel = require("../models/templateModule");
 //  Read Template
 exports.readTemplate = async (condition) => {
     try {
-        const readTemplate = await templateModel.find(condition).populate("business", "_id ");
+        const readTemplate = await templateModel.find(condition).populate("businessId", "_id ");
         await businessCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(readTemplate);
     } catch (error) {

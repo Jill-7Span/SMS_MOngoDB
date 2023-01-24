@@ -2,32 +2,12 @@ const Filter = require('bad-words');
 const filter = new Filter();
 const templateService = require("./templateService");
 const status = require("../common/indexOfCommon");
+const template = require("../common/findTemplate");
 
 //  Read Template
 exports.readTemplate = async (req, res) => {
     try {
-        const businessId = req.business._id;  // pass from token
-        const { templateId, search } = req.query;
-        let condition = {};
-        if (search) {
-            condition = {
-                $and: [
-                    { businessId },
-                    {
-                        $or: [
-                            { template: { $regex: search } },
-                            { category: { $regex: search } },
-                        ]
-                    }
-                ]
-            }
-        } else if (templateId) {
-            condition = {
-                _id: templateId
-            }
-        } else if (condition) {
-            condition = { businessId }
-        };
+        const condition = await template.findTemplate(req);
         const readTemplate = await templateService.readTemplate(condition);
         return status.success(res, "200", readTemplate);
     } catch (error) {
