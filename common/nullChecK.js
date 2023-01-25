@@ -5,7 +5,7 @@ exports.data = (data) => {
         return null;
     } else if (data._doc) {
         return data._doc;
-    } else{
+    } else {
         return data;
     }
 };

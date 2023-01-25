@@ -1,17 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const templateController = require("./templateController");
-const authMiddleware = require("../middleware/authMiddleware");
+const middleware = require("../middleware/authMiddleware");
 
 
+router.get("/readTemplate", middleware.authOfBusiness, templateController.readTemplate);
 
-router.get("/readTemplate",authMiddleware.authOfUsers, templateController.readTemplate);
+router.post("/addTemplate", middleware.authOfBusiness, templateController.addTemplate);
 
-router.post("/addTemplate",authMiddleware.authOfUsers, templateController.addTemplate);
-    
-router.put("/updateTemplate",authMiddleware.authOfUsers, templateController.updateTemplate);
+router.put("/updateTemplate", middleware.authOfBusiness, templateController.updateTemplate);
 
-router.delete("/deleteTemplate",authMiddleware.authOfUsers, templateController.deleteTemplate);
+router.delete("/deleteTemplate", middleware.authOfBusiness, templateController.deleteTemplate);
 
 
 module.exports = router;
