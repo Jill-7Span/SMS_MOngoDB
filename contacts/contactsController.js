@@ -1,4 +1,5 @@
 const contactsService = require("./contactsService");
+const tags = require("../tag/tagService");
 const status = require("../common/indexOfCommon");
 const allContact = require("../common/findContacts");
 const helper = require("../helper/indexOfHelper");
@@ -60,8 +61,8 @@ exports.updateContactTags = async (req, res) => {
     try {
         const businessId = req.business._id;
         const { _id, tagName } = req.body;
-        const tag = await contactsService.findTags(tagName, businessId);
-        const updatedTag = await contactsService.updateContactTags(_id, tag._id);
+        const tag = await tags.findTags(tagName, businessId);
+        const updatedTag = await contactsService.updateContactTags(_id, tagName);
         return status.success(res, "200", updatedTag);
     } catch (error) {
         return status.error(res, "500", error);

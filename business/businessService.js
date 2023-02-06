@@ -1,4 +1,3 @@
-const model = require("../models/db");
 const nullCheck = require("../common/indexOfCommon");
 const businessCache = require("../cache/usersCacheRequest");
 const BusinessModel = require("../models/BusinessModel");

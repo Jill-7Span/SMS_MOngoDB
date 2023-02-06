@@ -7,7 +7,7 @@ const helper = require("../helper/indexOfHelper");
 exports.findTags = async (req, res) => {
     try {
         const businessId = req.business._id;
-        const tagName = req.query;
+        const tagName = req.query.tagName;
         const tagData = await tagService.findTags(tagName, businessId);
         return status.success(res, "200", tagData);
     } catch (error) {

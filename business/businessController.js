@@ -5,6 +5,7 @@ const jwt = require("../common/jwtCommon");
 const status = require("../common/statusCodes");
 
 
+
 // get business
 exports.businessDetails = async (req, res) => {
     try {

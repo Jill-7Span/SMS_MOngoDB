@@ -4,7 +4,8 @@ const tagsModel = require("../models/tagsModel");
 //  Find Tag
 exports.findTags = async (tagName, businessId) => {
     try {
-        const tags = await tagsModel.find({$and:[{ tag: tagName },{ businessId }]})
+        // const tags = await tagsModel.findOne({ businessId:"63dcae99342d24f5dec64448" });
+        const tags = await tagsModel.findOne({ $and: [{ tag: tagName }, { businessId }] });
         return nullCheck.data(tags);
     } catch (error) {
         return error;
@@ -25,7 +26,6 @@ exports.allTags = async (businessId) => {
 exports.createTag = async (tagData) => {
     try {
         const newTagsData = await tagsModel.create(tagData);
-        console.log('newTagsData: ', newTagsData);
         // await tagCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(newTagsData);
     } catch (error) {

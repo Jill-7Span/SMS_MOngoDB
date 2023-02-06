@@ -40,7 +40,7 @@ exports.updateContactTags = async (_id, tagsId) => {
     try {
         const updatedContact = await contactsModel.updateMany(
             { _id: { $in: _id } },
-            { $set: { tagsId } }
+            { $set:{tagId: tagsId}}
         );
         // await contactsCache.setCacheData(nullCheck.data.id, nullCheck.data);
         return nullCheck.data(updatedContact);
