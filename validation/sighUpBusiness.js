@@ -1,10 +1,10 @@
-// insert user
+// insert business
 const Joi = require('joi');
 const string = require("string-sanitizer");
+const status = require("../common/statusCodes");
 
-exports.userSignUpValidation = (req, res, next) => {
+exports.signUpBusiness = (req, res, next) => {
     const validation = Joi.object({
-        // role: Joi.string().required(),
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
         contactNumber: Joi.string().required(),
@@ -13,22 +13,21 @@ exports.userSignUpValidation = (req, res, next) => {
         confirmPassword: Joi.string().required(),
         city:Joi.string().required(),
         state:Joi.string().required(),
+        country:Joi.string().required(),
         company:Joi.string().required(),
     })
         .unknown(false);//.unknown(true)
     const { error } = validation.validate(req.body, { abortEarly: false });
     if (error) {
-        return res.status(400).json({ "error": error.message });
+        return status.error(res,"400",error);
     } else {
         const bodyData = req.body;
-        // bodyData.role = string.sanitize.removeNumber(bodyData.role);
         bodyData.firstName = string.sanitize.removeNumber(bodyData.firstName);
         bodyData.lastName = string.sanitize.removeNumber(bodyData.lastName);
         // bodyData.email = string.validate.isEmail(bodyData.email)     //email validation
-        // bodyData.role = bodyData.role.toUpperCase();
         bodyData.firstName = bodyData.firstName.charAt(0).toUpperCase() + bodyData.firstName.slice(1);
         bodyData.lastName = bodyData.lastName.charAt(0).toUpperCase() + bodyData.lastName.slice(1);
-        console.log("Insert User Data Validation Check Successfully");
+        console.log("Insert business Data Validation Check Successfully");
         next();
     }
 };

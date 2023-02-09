@@ -1,16 +1,10 @@
 const mongoose = require("mongoose");
 
-const templates = new mongoose.Schema({
+const tags = new mongoose.Schema({
 
-  template: {
+  tag: {
     type: String,
     required: true,
-    trim: true,
-    maxLength: 225,
-  },
-  category: {
-    type: String,
-    default: "general category",
     trim: true,
   },
   businessId: {
@@ -22,7 +16,7 @@ const templates = new mongoose.Schema({
   versionKey: false,
   timestamps: { createdAt: true, updatedAt: true }
 });
-const templatesModel = mongoose.model("templates", templates);
+const tagsModel = mongoose.model("tags", tags);
 
-module.exports = templatesModel;
+module.exports = tagsModel;
 

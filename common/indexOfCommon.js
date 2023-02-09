@@ -1,8 +1,8 @@
-const { createNewUser } = require("./addUserCommon");
 const { tokenJwt } = require("./jwtCommon");
-const { data } = require("./nullCheckCommon");
-const { permission } = require("./permissionOfRoute");
-const { serverError, invalidDetails, success } = require("./statusCodes");
+const { data } = require("./nullChecK");
+const { error, success } = require("./statusCodes");
+const { listOfNumber } = require("./findContacts");
+const { findTemplate } = require("./findTemplate");
 
 
-module.exports = { tokenJwt, data, createNewUser, permission, serverError, invalidDetails, success };
+module.exports = { tokenJwt, data, error, success, listOfNumber, findTemplate };

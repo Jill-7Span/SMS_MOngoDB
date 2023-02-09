@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userClient = new mongoose.Schema({
+const contactsModel = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
@@ -16,29 +16,27 @@ const userClient = new mongoose.Schema({
     unique: true,
     trim: true,
   },
-  category: {
+  email: {
     type: String,
+    unique: true,
     trim: true,
   },
-  tags: [{
-    type: String,
-    trim: true,
-    lowercase: true,
-  }],
-  user: {
+  tagId: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
+    ref: 'tags',
+    required: false,
+  }],
+  businessId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'business',
     required: false,
   },
-  date: {
-    type: Date,
-    default: Date.now
-  },
 }, {
-  versionKey: false
+  versionKey: false,
+  timestamps: { createdAt: true, updatedAt: true }
 });
 
-const userClientModel = mongoose.model("user_client", userClient);
+const ContactsModel = mongoose.model("contacts", contactsModel);
 
 
-module.exports = userClientModel;
+module.exports = ContactsModel;

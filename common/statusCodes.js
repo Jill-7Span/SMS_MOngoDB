@@ -1,23 +1,30 @@
 //  Status Codes
 
-exports.serverError = (res) => {
-    return res.status(403).json({
-        statusCode: 403,
-        message: error + ' Server error occurred'
+exports.error = (res, statusCode, errors) => {
+    return res.status(statusCode).json({
+        statusCode: statusCode,
+        Message: errors.message || errors,
     });
 };
 
-exports.invalidDetails = (res) => {
-    return res.status(404).json({
-        statusCode: 404,
-        error: "invalid details"
-    });
-};
-
-exports.success = (res, data) => {
-    var key = res.req.route.path;
-    return res.status(200).json({
-        statusCode: 200,
+exports.success = (res, statusCode, data) => {
+    const key = res.req.route.path;
+    return res.status(statusCode).json({
+        statusCode: statusCode,
         [key]: data,        // Dynamic Key to JSON
     });
 };
+
+
+const code = {
+    "401": "Unauthorized",
+    "200": "success",
+    "201": "created",
+    "400": "Bad Request",
+    "403": "Already Exits",
+    "404": "Not Found",
+    "408": "Request Timeout",
+    "429": "Too Many Requests",
+    "500": "Internal Server Error",
+    "503": "Service Unavailable",
+}

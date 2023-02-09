@@ -1,15 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const users = require("../user/user");
-const userClient = require("../userClient/userClient")
-const templates = require("../template/template")
+const business = require("../business/business");
+const contacts = require("../contacts/contacts");
+const templates = require("../template/template");
+const sms = require("../sms/sms");
+const schedular = require("../cron/cron")
+const tags = require("../tag/tag")
 
 // Routes
-router.use("/users", users);
+router.use("/business", business);
 
-router.use("/userClient", userClient);
+router.use("/contacts", contacts);
 
-router.use("/templates" , templates)
+router.use("/templates", templates);
+
+router.use("/sms", sms);
+
+router.use("/schedular", schedular);
+
+router.use("/tags",tags)
 
 
 module.exports = router;

@@ -1,32 +1,22 @@
 const model = require("../models/db");
 const jwt = require('jsonwebtoken');
 const env = require("../common/env");
+const status = require("../common/indexOfCommon");
 
-exports.authOfUsers = (req, res, next) => {
+exports.authOfBusiness = (req, res, next) => {
     const authorization = req.headers['authorization'];
     const tokenId = authorization && authorization.split(' ')[1];
-    jwt.verify(tokenId, env.SECRET_KEY, async (err, user) => {
+    jwt.verify(tokenId, env.SECRET_KEY, (error, business) => {
+        if (error) {
+            return status.error(res,"401",error);
+        };
         try {
-            const routes = req.baseUrl + req.route.path;
-            const roleFromToken = user.role;
-            // if (roleFromToken == "ADMIN") {
-            if (1 == 1) {
-                console.log("admin Middleware Check is Successfully");
-                req.user = user;
-                next();
-            } else {
-                const authFromDatabase = await model.permission.findOne({ where: { role: roleFromToken, routes } });
-                const roleFromDatabase = authFromDatabase.dataValues.role;
-                if (authFromDatabase && (roleFromDatabase == roleFromToken)) {
-                    console.log("Auth Middleware Check is Successfully");
-                    req.user = user;
-                    next();
-                }
-            }
+            console.log("admin Middleware Check is Successfully");
+            req.business = business;
+            next();
         } catch (error) {
-            console.log('error: ', error);
-            return res.status(404).json(error);
-        }
+            return status.error(res,"500",error);
+        };
     })
 };
 
