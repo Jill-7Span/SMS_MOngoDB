@@ -21,26 +21,22 @@ const contactsModel = new mongoose.Schema({
     unique: true,
     trim: true,
   },
-  tags: [{
-    type: String,
-    trim: true,
-    lowercase: true,
+  tagId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'tags',
+    required: false,
   }],
-  business: {
+  businessId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'business',
     required: false,
-  },
-  date: {
-    type: Date,
-    default: Date.now
   },
 }, {
   versionKey: false,
   timestamps: { createdAt: true, updatedAt: true }
 });
 
-const ContactsModel = mongoose.model("contactsModel", contactsModel);
+const ContactsModel = mongoose.model("contacts", contactsModel);
 
 
 module.exports = ContactsModel;
