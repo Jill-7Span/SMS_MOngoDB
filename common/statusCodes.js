@@ -1,10 +1,9 @@
 //  Status Codes
 
 exports.error = (res, statusCode, errors) => {
-    console.log('errors: ', errors);
     return res.status(statusCode).json({
         statusCode: statusCode,
-        Message: errors.message,
+        Message: errors.message || errors,
     });
 };
 
@@ -15,3 +14,17 @@ exports.success = (res, statusCode, data) => {
         [key]: data,        // Dynamic Key to JSON
     });
 };
+
+
+const code = {
+    "401": "Unauthorized",
+    "200": "success",
+    "201": "created",
+    "400": "Bad Request",
+    "403": "Already Exits",
+    "404": "Not Found",
+    "408": "Request Timeout",
+    "429": "Too Many Requests",
+    "500": "Internal Server Error",
+    "503": "Service Unavailable",
+}
