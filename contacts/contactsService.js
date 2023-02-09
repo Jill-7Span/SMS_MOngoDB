@@ -1,5 +1,5 @@
 const nullCheck = require("../common/indexOfCommon");
-const contactsCache = require("../cache/usersCacheRequest");
+const contactsCache = require("../cache/cacheRequest");
 const contactsModel = require("../models/contactsModel");
 
 

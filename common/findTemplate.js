@@ -22,6 +22,5 @@ exports.findTemplate = async (req) => {
             ]
         }
     }
-    console.log('condition: ', condition);
     return condition;
 };

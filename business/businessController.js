@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt');
 const businessService = require("./businessService");
-const businessCache = require("../cache/usersCacheRequest");
+const businessCache = require("../cache/cacheRequest");
 const jwt = require("../common/jwtCommon");
 const status = require("../common/statusCodes");
+const helperFile = require("../helper/indexOfHelper");
 
 
 
@@ -27,22 +28,7 @@ exports.businessDetails = async (req, res) => {
 exports.businessList = async (req, res) => {
     try {
         const { emailSearch, numberSearch, size, page } = req.query;
-        let condition = {};
-        if (emailSearch || numberSearch) {
-            condition = {
-                $or: [
-                    { email: { $regex: emailSearch } },
-                    { contactNumber: { $regex: numberSearch } },
-                ]
-            };
-        } else if (size && page) {
-            condition = {
-                limit: parseInt(size),
-                offset: parseInt(size) * parseInt((page - 1)),
-            };
-        } else if (condition = {}) {
-            condition = {};
-        }
+        const condition = helperFile.getBusinessList(emailSearch, numberSearch, size, page);
         const business = await businessService.getBusinessList(condition);
         return status.success(res, "200", business);
     } catch (error) {
@@ -54,19 +40,15 @@ exports.businessList = async (req, res) => {
 exports.businessSignUp = async (req, res) => {
     const bodyData = req.body;
     try {
-        const existingBusiness = await businessService.getBusinessData(
-            {
-                $or: [
-                    { email: bodyData.email },
-                    { contactNumber: bodyData.contactNumber }
-                ]
-            });
+        const condition = helperFile.businessData(bodyData);
+        const existingBusiness = await businessService.getBusinessData(condition);
         if (!existingBusiness) {
             if (bodyData.password === bodyData.confirmPassword) {
                 const salt = await bcrypt.genSalt(10);
                 bodyData.password = await bcrypt.hash(bodyData.password, salt);
                 const newBusiness = await businessService.creteBusiness(bodyData);
                 delete newBusiness.password
+                await businessCache.setCacheData(newBusiness._id, newBusiness);
                 const token = jwt.tokenJwt(newBusiness);
                 const newBusinessDetail = { ...newBusiness, token };
                 return status.success(res, "201", newBusinessDetail);
@@ -86,7 +68,8 @@ exports.businessLogIn = async (req, res) => {
     try {
         const { password, email } = req.body;
         const business = await businessService.getBusinessData({ email });
-        if (!business) return status.invalidDetails;
+        if (!business) return status.error(res, "403", "Invalid Details");
+
         const businessData = {
             firstName: business.firstName,
             lastName: business.lastName,
@@ -101,7 +84,7 @@ exports.businessLogIn = async (req, res) => {
                 return status.error(res, "401", "Invalid Details");
             }
         } else {
-            return status.error(res, "401", "Invalid Details");;
+            return status.error(res, "401", "Invalid Details");
         }
     } catch (error) {
         return status.error(res, "500", error);
@@ -111,16 +94,13 @@ exports.businessLogIn = async (req, res) => {
 // update Business
 exports.businessUpdate = async (req, res) => {
     try {
-        const body = req.body;
+        const bodyData = req.body;
         const tokenId = req.business._id;
         const existingBusinessData = await businessService.getBusinessData({ _id: tokenId });
         let update = {};
-        const existingContactNumberOrEmail = await businessService.getBusinessList({
-            $or: [
-                { contactNumber: body.contactNumber },
-                { email: req.body.email }
-            ]
-        });
+        const condition = helperFile.businessData(bodyData)
+        const existingContactNumberOrEmail = await businessService.getBusinessList(condition);
+
         if ((req.body.hasOwnProperty("contactNumber")) || (req.body.hasOwnProperty("email"))) {
             if ((existingContactNumberOrEmail.length == 0) || (existingContactNumberOrEmail[0]._id === tokenId)) {
                 update.contactNumber = parseInt(body.contactNumber);
@@ -139,6 +119,7 @@ exports.businessUpdate = async (req, res) => {
         };
         update.updatedAt = new Date();
         const updatedData = await businessService.updateBusiness(existingBusinessData._id, update);
+        await businessCache.setCacheData(updatedData._id, updatedData)
         const token = status.tokenJwt(updatedData);
         return status.success(res, "200", { ...updatedData, token });
     } catch (error) {
@@ -169,7 +150,7 @@ exports.businessPasswordChange = async (req, res) => {
                 }
             });
         } else {
-            return status.passwordNOtMatch;
+            return status.error(res, "401", "Invalid Details");
         };
     } catch (error) {
         return status.error(res, "500", error);
@@ -181,7 +162,7 @@ exports.businessDelete = async (req, res) => {
     try {
         const _id = req.business._id;
         await businessService.deleteBusiness(_id);
-        // await businessCache.deleteCacheData(req.query._id, existingBusiness);
+        await businessCache.deleteCacheData(_id);
         return status.error(res, "200", "Deleted");
     } catch (error) {
         return status.error(res, "500", error);

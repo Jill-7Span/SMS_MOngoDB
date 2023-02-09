@@ -3,13 +3,20 @@ const tags = require("../tag/tagService");
 const status = require("../common/indexOfCommon");
 const allContact = require("../common/findContacts");
 const helper = require("../helper/indexOfHelper");
+const contactCache = require("../cache/cacheRequest");
+
 
 //  Find Contact
 exports.findContact = async (req, res) => {
     try {
-        const id = req.body.id
-        const uploadedCsv = await contactsService.findContact(id);
-        return status.success(res, "200", uploadedCsv);
+        const _id = req.body._id;
+        const cachedContact = await contactCache.getCacheData(_id);
+        if (cachedContact !== null) {
+            return status.success(res, "200", cachedContact);
+        } else {
+            const uploadedCsv = await contactsService.findContact(_id);
+            return status.success(res, "200", uploadedCsv);
+        }
     } catch (error) {
         return status.error(res, "500", error);
     };
@@ -39,7 +46,7 @@ exports.csvUpload = async (req, res) => {
     catch (error) {
         return status.error(res, "500", error);
     };
-}
+};
 
 
 // Update Contact
@@ -49,8 +56,8 @@ exports.updateContact = async (req, res) => {
         const bodyData = req.body;
         const updatedAt = new Date();
         const updatedContact = await contactsService.updateContact(businessId, bodyData, updatedAt);
+        await contactCache.setCacheData(updatedContact._id,updatedContact)
         return status.success(res, updatedContact);
-
     } catch (error) {
         return status.error(res, "500", error);
     };
@@ -74,6 +81,7 @@ exports.deleteContact = async (req, res) => {
     try {
         const _id = req.query._id;
         const deletedContact = await contactsService.deleteContact(_id);
+        await contactCache.deleteCacheData(_id)
         return status.success(res, "200", `Deleted Successfully ${deletedContact.firstName + " " + deletedContact.contactNumber}`)
     } catch (error) {
         return status.error(res, "500", error);

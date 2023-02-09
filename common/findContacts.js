@@ -18,5 +18,4 @@ exports.listOfNumber = async (searchTags, businessId) => {
     } catch (error) {
         return error
     }
-
 };

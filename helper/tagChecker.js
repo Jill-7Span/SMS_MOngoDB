@@ -2,11 +2,9 @@ const tags = require("../tag/tagService");
 
 
 exports.alreadyExistedTag = async (tagName, businessId) => {
-    console.log('tagName, businessId: ', tagName, businessId);
     try {
-        // const existedTag = await tags.findTags(tagName, businessId);
-        // console.log('existedTag: ', existedTag);
-        if (1==1) {
+        const existedTag = await tags.findTags(tagName, businessId);
+        if (!existedTag) {
             const tag = {
                 tag: tagName,
                 businessId: businessId

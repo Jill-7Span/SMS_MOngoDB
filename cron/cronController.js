@@ -9,8 +9,8 @@ exports.cronSchedular = (req, res) => {
     const newJob = cron.schedule(`${sec} */${min} */${hrs} */${day} */${month} */${dow}`, () => {
         console.log("---------------------");
         test.sms(message);
-        
-        sms.sendSms()
+         
+        sms.sendSms(req,res)
     });
 };
 

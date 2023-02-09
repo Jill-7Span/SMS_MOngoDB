@@ -1,12 +1,12 @@
 const nullCheck = require("../common/indexOfCommon");
-const businessCache = require("../cache/usersCacheRequest");
-const BusinessModel = require("../models/BusinessModel");
+const businessCache = require("../cache/cacheRequest");
+const businessModel = require("../models/businessModel");
 
 
 //get business
 exports.getBusinessData = async (condition) => {
     try {
-        const data = await BusinessModel.findOne(condition).select("+password");       
+        const data = await businessModel.findOne(condition).select("+password");       
         // .select is use to het password when in schema its select false`
         return nullCheck.data(data);
     } catch (error) {
@@ -17,7 +17,7 @@ exports.getBusinessData = async (condition) => {
 // get Business
 exports.getBusinessList = async (condition) => {
     try {
-        const data = await BusinessModel.find(condition);
+        const data = await businessModel.find(condition);
         return data;
     } catch (error) {
         return error;
@@ -27,7 +27,7 @@ exports.getBusinessList = async (condition) => {
 // sign up Business
 exports.creteBusiness = async (data) => {
     try {
-        const newBusinessData = await BusinessModel.create(data);
+        const newBusinessData = await businessModel.create(data);
         // await businessCache.setCacheData(newBusinessData.dataValues._id, newBusinessData.dataValues);
         return nullCheck.data(newBusinessData);
     } catch (error) {
@@ -38,7 +38,7 @@ exports.creteBusiness = async (data) => {
 // update Business
 exports.updateBusiness = async (_id, update) => {
     try {
-        const data = await BusinessModel.findOneAndUpdate({ _id }, { $set: update }, { returnDocument: 'after' });
+        const data = await businessModel.findOneAndUpdate({ _id }, { $set: update }, { returnDocument: 'after' });
         // await businessCache.setCacheData(data.dataValues._id, data.dataValues);
         return nullCheck.data(data);
     } catch (error) {
@@ -49,7 +49,7 @@ exports.updateBusiness = async (_id, update) => {
 // delete Business
 exports.deleteBusiness = async (_id) => {
     try {
-        return await BusinessModel.deleteOne({ _id });
+        return await businessModel.deleteOne({ _id });
     } catch (error) {
         return error;
     };
