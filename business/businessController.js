@@ -5,6 +5,7 @@ const jwt = require("../common/jwtCommon");
 const status = require("../common/statusCodes");
 
 
+
 // get business
 exports.businessDetails = async (req, res) => {
     try {
@@ -15,10 +16,10 @@ exports.businessDetails = async (req, res) => {
         } else {
             const existingBusiness = await businessService.getBusinessData({ _id: businessId });
             await businessCache.setCacheData(businessId, existingBusiness);
-            return status.success(res, existingBusiness);
+            return status.success(res, "200", existingBusiness);
         }
     } catch (error) {
-        return status.error(res, "400", error);
+        return status.error(res, "500", error);
     };
 };
 
@@ -43,9 +44,9 @@ exports.businessList = async (req, res) => {
             condition = {};
         }
         const business = await businessService.getBusinessList(condition);
-        return status.success(res, business);
+        return status.success(res, "200", business);
     } catch (error) {
-        return status.error(res, "400", error);
+        return status.error(res, "500", error);
     };
 };
 
@@ -68,16 +69,15 @@ exports.businessSignUp = async (req, res) => {
                 delete newBusiness.password
                 const token = jwt.tokenJwt(newBusiness);
                 const newBusinessDetail = { ...newBusiness, token };
-                return status.success(res, " 200", newBusinessDetail);
+                return status.success(res, "201", newBusinessDetail);
             } else {
-                return status.error(res, "400", "Password Didn't Match");
+                return status.error(res, "403", "Password Didn't Match");
             }
         } else {
-            return status.error(res, "400", "User Already Exits");
+            return status.error(res, "403", "User Already Exits");
         }
     } catch (error) {
-        return status.error(res, "400", error);
-
+        return status.error(res, "500", error);
     };
 };
 
@@ -95,17 +95,16 @@ exports.businessLogIn = async (req, res) => {
             const businessPassword = business.password;
             const passwordCompare = await bcrypt.compare(password, businessPassword);
             if (passwordCompare) {
-                const token = status.tokenJwt(business);
+                const token = jwt.tokenJwt(business);
                 return status.success(res, "200", { ...businessData, token });
             } else {
-                return status.error(res, "400", "Invalid Details");
+                return status.error(res, "401", "Invalid Details");
             }
         } else {
-            return status.error(res, "400", "Invalid Details");;
+            return status.error(res, "401", "Invalid Details");;
         }
     } catch (error) {
-        return status.error(res, "400", error);
-
+        return status.error(res, "500", error);
     };
 };
 
@@ -130,10 +129,10 @@ exports.businessUpdate = async (req, res) => {
                 for (let i = 0; i < existingContactNumberOrEmail.length; i++) {
                     const element = existingContactNumberOrEmail[i];
                     if ((element._id != tokenId) && (element.contactNumber === parseInt(body.contactNumber))) {
-                        return status.error(res, "400", "Number Already exits");
+                        return status.error(res, "403", "Number Already exits");
                     }
                     if ((element._id != tokenId) && (element.email === body.email)) {
-                        return status.error(res, "400", "Email Already exits");;
+                        return status.error(res, "403", "Email Already exits");;
                     }
                 };
             }
@@ -143,7 +142,7 @@ exports.businessUpdate = async (req, res) => {
         const token = status.tokenJwt(updatedData);
         return status.success(res, "200", { ...updatedData, token });
     } catch (error) {
-        return status.error(res, "400", error);
+        return status.error(res, "500", error);
     };
 };
 
@@ -166,14 +165,14 @@ exports.businessPasswordChange = async (req, res) => {
                     await businessService.updateBusiness(business._id, update);
                     return status.updated;
                 } else {
-                    return status.error(res, "400", "Incorrect Credentials");
+                    return status.error(res, "401", "Incorrect Credentials");
                 }
             });
         } else {
             return status.passwordNOtMatch;
         };
     } catch (error) {
-        return status.error(res, "400", error);
+        return status.error(res, "500", error);
     };
 };
 
@@ -185,7 +184,7 @@ exports.businessDelete = async (req, res) => {
         // await businessCache.deleteCacheData(req.query._id, existingBusiness);
         return status.error(res, "200", "Deleted");
     } catch (error) {
-        return status.error(res, "400", error);
+        return status.error(res, "500", error);
     };
 };
 

@@ -8,14 +8,14 @@ exports.authOfBusiness = (req, res, next) => {
     const tokenId = authorization && authorization.split(' ')[1];
     jwt.verify(tokenId, env.SECRET_KEY, (error, business) => {
         if (error) {
-            return status.error(res,"400",error);
+            return status.error(res,"401",error);
         };
         try {
             console.log("admin Middleware Check is Successfully");
             req.business = business;
             next();
         } catch (error) {
-            return status.error(res,"400",error);
+            return status.error(res,"500",error);
         };
     })
 };

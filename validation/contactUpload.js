@@ -11,7 +11,7 @@ const file = multer.diskStorage({
     }
 });
 
-const upload = multer({storage:file})
+const upload = multer({storage:file});
 
 
 exports.csvUpload = upload.single('test')
