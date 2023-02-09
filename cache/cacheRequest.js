@@ -3,7 +3,7 @@ const redisClient = Redis.createClient();
 
 // "redis-commander": "^0.8.0",    in  package.json
 
-exports.getCacheData = async (id) => {
+exports.getCacheData = async (_id) => {
     try {
         await redisClient.connect();
         const cacheData = await redisClient.GET(`cacheData.${_id}`);
@@ -16,7 +16,7 @@ exports.getCacheData = async (id) => {
     }
 };
 
-exports.setCacheData = async (id, newCacheData) => {
+exports.setCacheData = async (_id, newCacheData) => {
     try {
         await redisClient.connect();
         const cacheData = await redisClient.SET(`cacheData.${_id}`, JSON.stringify(newCacheData));
@@ -30,7 +30,7 @@ exports.setCacheData = async (id, newCacheData) => {
     }
 };
 
-exports.deleteCacheData = async (id) => {
+exports.deleteCacheData = async (_id) => {
     try {
         await redisClient.connect();
         await redisClient.DEL(`cacheData.${_id}`);

@@ -4,7 +4,6 @@ const tagsModel = require("../models/tagsModel");
 //  Find Tag
 exports.findTags = async (tagName, businessId) => {
     try {
-        // const tags = await tagsModel.findOne({ businessId:"63dcae99342d24f5dec64448" });
         const tags = await tagsModel.findOne({ $and: [{ tag: tagName }, { businessId }] });
         return nullCheck.data(tags);
     } catch (error) {

@@ -11,7 +11,6 @@ exports.csvToJson = async (req,res) => {
     const tagId = await tag.findTags(tagName,businessId);
     const document = path.join(__dirname, `../temp/${req.file.originalname}`);
     const csvData = await csvtojson().fromFile(document);
-    console.log('csvData: ', csvData);
     csvData.forEach((obj) => {
         obj['businessId'] = businessId;
         obj['tagId'] = tagId._id;

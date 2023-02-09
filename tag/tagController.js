@@ -37,7 +37,6 @@ exports.createTag = async (req, res) => {
         }
         // const tagData = await helper.alreadyExistedTag(tagName, businessId);
         const newTag = await tagService.createTag(tagData);
-        console.log('newTag: ', newTag);
         return status.success(res, "200", newTag);
     } catch (error) {
         return error
