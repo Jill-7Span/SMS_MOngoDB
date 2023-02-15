@@ -7,7 +7,7 @@ const businessModel = require("../models/businessModel");
 exports.getBusinessData = async (condition) => {
     try {
         const data = await businessModel.findOne(condition).select("+password");       
-        // .select is use to het password when in schema its select false`
+        // .select is use to set password when in schema its select false`
         return nullCheck.data(data);
     } catch (error) {
         return error;

@@ -24,7 +24,7 @@ exports.findTag = async (tagName, businessId) => {
         if (existedTag) {
             return existedTag;
         } else {
-            return "Not Found Tag"
+            return "Not Found Tag";
         }
     } catch (error) {
         return error;

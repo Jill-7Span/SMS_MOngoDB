@@ -29,7 +29,6 @@ exports.allContacts = async (req, res) => {
         const { searchTags } = req.query;
         const condition = await allContact.listOfNumber(searchTags, businessId);
         const allContacts = await contactsService.allContacts(condition);
-        // console.log("all contacts", allContacts.map(({ contactNumber }) => contactNumber));
         return status.success(res, "200", allContacts)
     } catch (error) {
         return status.error(res, "500", error);
@@ -42,8 +41,7 @@ exports.csvUpload = async (req, res) => {
         const csvData = await helper.csvToJson(req, res);
         const csv = await contactsService.csvUpload(csvData);
         return status.success(res, "201", csv);
-    }
-    catch (error) {
+    } catch (error) {
         return status.error(res, "500", error);
     };
 };
@@ -56,7 +54,7 @@ exports.updateContact = async (req, res) => {
         const bodyData = req.body;
         const updatedAt = new Date();
         const updatedContact = await contactsService.updateContact(businessId, bodyData, updatedAt);
-        await contactCache.setCacheData(updatedContact._id,updatedContact)
+        await contactCache.setCacheData(updatedContact._id, updatedContact)
         return status.success(res, updatedContact);
     } catch (error) {
         return status.error(res, "500", error);
@@ -69,7 +67,7 @@ exports.updateContactTags = async (req, res) => {
         const businessId = req.business._id;
         const { _id, tagName } = req.body;
         const tag = await tags.findTags(tagName, businessId);
-        const updatedTag = await contactsService.updateContactTags(_id, tagName);
+        const updatedTag = await contactsService.updateContactTags(_id, tag.tagName);
         return status.success(res, "200", updatedTag);
     } catch (error) {
         return status.error(res, "500", error);

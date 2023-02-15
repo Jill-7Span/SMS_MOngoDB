@@ -10,7 +10,7 @@ exports.cronSchedular = (req, res) => {
         console.log("---------------------");
         test.sms(message);
          
-        sms.sendSms(req,res)
+        sms.test(req,res)
     });
 };
 
