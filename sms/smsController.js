@@ -5,8 +5,7 @@ const contacts = require("../contacts/contactsService");
 const template = require("../template/templateService");
 
 const accountSid = "AC8576eaa8f6f74b7251f8dfabb5d259d4"
-const authToken = "11a4e32d9f474e9648dc6074cfa28598"
-const serviceId = "MG8d30dbbea047d868e868484cbb990e88"
+const authToken = "d55d0c4dd3d49ae4976ee1fbe98eb5bb"
 
 const client = require('twilio')(accountSid, authToken);
 
@@ -32,13 +31,13 @@ exports.sendSms = async (req, res) => {
 
 exports.test = async (req, res) => {
     try {
-
-        client.messages.create({
+        const sms = await client.messages.create({
             to:["+919722030839"],
             from:"+18127140430",
             body:"This is your captain speaking we are ready to take off wear your seat belt we are good to go"
         })
-        .then((message)=>console.log(message.sid))
+        // .then((message)=>console.log(message.sid))
+        return (sms.sid)
     } catch (error) {
         console.log('error: ', error);
         return error

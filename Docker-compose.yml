@@ -18,7 +18,8 @@ services:
       - 5000:5000
     environment:
       PORT: 5000
-      MONGO_URL: "mongodb://host.docker.internal:27017/SMS"
+      MONGO_URL: "mongodb+srv://Jill:Jill123@cluster0.jqqjgcc.mongodb.net/SMS"
+      # MONGO_URL: "mongodb://host.docker.internal:27017/SMS"
     depends_on:
       - mongo_db
   
