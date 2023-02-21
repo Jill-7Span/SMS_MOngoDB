@@ -12,10 +12,11 @@ exports.findContact = async (req, res) => {
         const _id = req.body._id;
         const cachedContact = await contactCache.getCacheData(_id);
         if (cachedContact !== null) {
-            return status.success(res, "200", cachedContact);
+            return status.success(res, "200", JSON.parse(cachedContact));
         } else {
-            const uploadedCsv = await contactsService.findContact(_id);
-            return status.success(res, "200", uploadedCsv);
+            const contact = await contactsService.findContact(_id);
+            await contactCache.setCacheData(_id,contact)
+            return status.success(res, "200", contact);
         }
     } catch (error) {
         return status.error(res, "500", error);

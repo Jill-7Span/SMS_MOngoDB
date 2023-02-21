@@ -3,14 +3,15 @@ const cron = require("node-cron");
 const express = require("express");
 const sms = require("../sms/smsController");
 
-exports.cronSchedular = (req, res) => {
+exports.cronSchedular = async (req, res) => {
+    console.log("hello in cronSchedular");
     const { sec, min, hrs, day, month, dow, message } = req.body;
 
-    const newJob = cron.schedule(`${sec} */${min} */${hrs} */${day} */${month} */${dow}`, () => {
+    await cron.schedule(`${sec} ${min} ${hrs} ${day} ${month} ${dow}`, () => {
         console.log("---------------------");
         test.sms(message);
-         
-        sms.test(req,res)
+        const sendSms = sms.test(req, res);
+        return res.send(sendSms)
     });
 };
 
